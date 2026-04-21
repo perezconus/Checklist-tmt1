@@ -1,0 +1,2422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Check List Molduras TMT1 v5</title>
+  <meta name="theme-color" content="#1a1a1a">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800&family=Barlow:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+  <style>
+    :root{
+      /* Industrial Palette — TMT1 Excel colors */
+      --bg:#FFFFFF;
+      --surface:#FFFFFF;
+      --surface2:#F8F9FA;
+      --surface3:#F0F2F5;
+      --border:#D0D5DD;
+      --border2:#E4E7EC;
+      --accent:#C75B00;
+      --accent2:#A34800;
+      --accent-light:#FFF3E8;
+      --success:#1A7A3C;
+      --danger:#C0392B;
+      --warn:#B7770D;
+      --admin:#6D28D9;
+      --text:#0F1117;
+      --text2:#3D4355;
+      --muted:#6B7280;
+      --header-bg:#111418;
+      --header-border:#C75B00;
+      --font:'Barlow Condensed', sans-serif;
+      --font-body:'Barlow', sans-serif;
+      --mono:'Share Tech Mono', monospace;
+      --z0:#B91C1C;--z1:#1D4ED8;--z2:#6D28D9;--z3:#B45309;
+      --shadow-sm:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md:0 4px 12px rgba(0,0,0,0.10),0 2px 4px rgba(0,0,0,0.06);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+    body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh}
+
+    /* ── HEADER ── */
+    .header{
+      position:sticky;top:0;z-index:100;
+      background:var(--header-bg);
+      border-bottom:3px solid var(--accent);
+      padding:0 16px;
+      display:flex;align-items:center;justify-content:space-between;
+      height:58px;
+      box-shadow:0 2px 12px rgba(0,0,0,0.35);
+    }
+    .header-brand{display:flex;align-items:center;gap:12px}
+    .header-icon{
+      width:34px;height:34px;
+      background:var(--accent);
+      border-radius:4px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:18px;
+      box-shadow:0 0 0 2px rgba(199,91,0,0.3);
+    }
+    .header-title{
+      font-family:var(--font);
+      font-size:20px;font-weight:800;
+      letter-spacing:3px;color:#FFFFFF;
+      text-transform:uppercase;
+    }
+    .header-sub{
+      font-family:var(--mono);font-size:10px;
+      color:var(--accent);letter-spacing:2px;
+      margin-top:1px;
+    }
+    .user-chip{
+      display:flex;align-items:center;gap:7px;
+      background:rgba(255,255,255,0.07);
+      border:1px solid rgba(255,255,255,0.15);
+      border-radius:4px;padding:5px 12px;
+      font-family:var(--font);font-size:13px;font-weight:700;
+      color:#FFFFFF;letter-spacing:1px;
+    }
+    .user-chip-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+    .user-chip-dot.admin{background:#A78BFA}
+    .user-chip-dot.keyuser{background:#FBBF24}
+    .user-chip-dot.user{background:#34D399}
+    .btn-logout{
+      background:none;
+      border:1px solid rgba(255,255,255,0.2);
+      color:rgba(255,255,255,0.6);
+      border-radius:4px;padding:5px 10px;
+      cursor:pointer;font-family:var(--font);
+      font-weight:700;letter-spacing:1px;
+      transition:all .15s;
+    }
+    .btn-logout:hover{border-color:var(--accent);color:var(--accent)}
+
+    /* ── TAB NAV ── */
+    .tab-nav{
+      position:sticky;top:58px;
+      background:#FFFFFF;
+      border-bottom:2px solid var(--border);
+      display:flex;overflow-x:auto;
+      box-shadow:0 2px 8px rgba(0,0,0,0.06);
+    }
+    .tab-nav::-webkit-scrollbar{display:none}
+    .tab-btn{
+      padding:13px 18px;background:none;border:none;
+      font-family:var(--font);font-size:12px;font-weight:700;
+      letter-spacing:2px;text-transform:uppercase;
+      color:var(--muted);cursor:pointer;
+      border-bottom:3px solid transparent;
+      white-space:nowrap;transition:color .15s,border-color .15s;
+    }
+    .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+    .tab-btn:hover:not(.active){color:var(--text2)}
+
+    /* ── LAYOUT ── */
+    .page{display:none}
+    .page.active{display:block}
+    .main-wrap{max-width:700px;margin:0 auto;padding:16px;padding-bottom:130px}
+    .wide-wrap{max-width:1200px;margin:0 auto;padding:16px}
+
+    /* ── CARDS ── */
+    .card{
+      background:#FFFFFF;
+      border:1px solid var(--border2);
+      border-radius:6px;
+      padding:18px;margin-bottom:14px;
+      box-shadow:var(--shadow-sm);
+    }
+    .card-title{
+      font-family:var(--font);
+      font-size:11px;font-weight:800;letter-spacing:3px;
+      color:var(--accent);text-transform:uppercase;
+      margin-bottom:16px;
+      display:flex;align-items:center;gap:8px;
+      padding-bottom:12px;
+      border-bottom:2px solid var(--surface3);
+    }
+    .card-title.admin-title{color:var(--admin)}
+
+    /* ── FIELDS ── */
+    .field{margin-bottom:12px}
+    .field label{
+      display:block;font-family:var(--font);
+      font-size:11px;font-weight:700;
+      letter-spacing:2px;color:var(--muted);
+      text-transform:uppercase;margin-bottom:6px;
+    }
+    .field input,.field select,.field textarea{
+      width:100%;background:#FFFFFF;
+      border:1.5px solid var(--border);
+      border-radius:4px;color:var(--text);
+      font-family:var(--font-body);font-size:15px;font-weight:500;
+      padding:10px 14px;outline:none;
+      transition:border-color .15s,box-shadow .15s;
+    }
+    .field input:focus,.field select:focus,.field textarea:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 3px rgba(199,91,0,0.10);
+    }
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+
+    /* ── BUTTONS ── */
+    .btn{
+      display:flex;align-items:center;justify-content:center;gap:7px;
+      border:none;border-radius:4px;
+      font-family:var(--font);font-size:13px;font-weight:800;
+      padding:13px 12px;cursor:pointer;width:100%;
+      text-transform:uppercase;letter-spacing:2px;
+      transition:filter .15s,transform .1s,box-shadow .15s;
+    }
+    .btn:active{transform:scale(0.97)}
+    .btn-primary{background:var(--accent);color:#FFFFFF;box-shadow:0 2px 8px rgba(199,91,0,0.30)}
+    .btn-primary:hover{filter:brightness(1.08)}
+    .btn-secondary{background:var(--surface3);color:var(--text2);border:1.5px solid var(--border)}
+    .btn-success{background:var(--success);color:#FFFFFF;box-shadow:0 2px 8px rgba(26,122,60,0.25)}
+    .btn-admin{background:var(--admin);color:#FFFFFF}
+    .btn-warn{background:var(--warn);color:#FFFFFF}
+    .btn-danger{background:var(--danger);color:#FFFFFF}
+    .btn-sm{padding:8px 14px;font-size:11px;width:auto}
+    .btn-action-edit{
+      background:#FEF3C7;border:1px solid #FCD34D;
+      color:#92400E;border-radius:4px;padding:6px 11px;
+      cursor:pointer;font-weight:700;font-family:var(--font);font-size:12px;
+      transition:filter .15s;
+    }
+    .btn-action-del{
+      background:#FEE2E2;border:1px solid #FCA5A5;
+      color:#991B1B;border-radius:4px;padding:6px 11px;
+      cursor:pointer;font-weight:700;font-family:var(--font);font-size:12px;
+    }
+
+    /* ── STATS BAR ── */
+    .stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+    .stat{
+      background:#FFFFFF;
+      border:1.5px solid var(--border2);
+      border-radius:6px;padding:12px 8px;
+      text-align:center;
+      box-shadow:var(--shadow-sm);
+      position:relative;overflow:hidden;
+    }
+    .stat::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:3px;
+      background:var(--border2);
+    }
+    .stat:nth-child(1)::before{background:var(--success)}
+    .stat:nth-child(2)::before{background:var(--danger)}
+    .stat:nth-child(3)::before{background:var(--warn)}
+    .stat:nth-child(4)::before{background:var(--accent)}
+    .stat-val{font-family:var(--mono);font-size:22px;font-weight:700}
+    .stat-val.ok{color:var(--success)}
+    .stat-val.fail{color:var(--danger)}
+    .stat-val.pct{color:var(--accent)}
+    .stat-val.crit{color:var(--warn)}
+    .stat-label{
+      font-family:var(--font);font-size:9px;font-weight:700;
+      letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:3px;
+    }
+
+    /* ── PROGRESS BAR ── */
+    .progress-wrap{
+      height:8px;background:var(--surface3);
+      border-radius:0;margin-bottom:18px;overflow:hidden;
+      border-left:3px solid var(--accent);
+    }
+    .progress-fill{
+      height:100%;
+      background:linear-gradient(90deg,var(--accent2),var(--accent));
+      transition:width .4s;
+    }
+
+    /* ── ZONE HEADERS ── */
+    .zone-header{
+      display:flex;align-items:center;gap:12px;
+      padding:13px 16px;margin:14px 0 8px;
+      background:#FFFFFF;border-radius:4px;
+      border-left:5px solid;
+      border-top:1px solid var(--border2);
+      border-right:1px solid var(--border2);
+      border-bottom:1px solid var(--border2);
+      box-shadow:var(--shadow-sm);
+    }
+    .zone-header.z0{border-left-color:var(--z0);background:#FFF8F8}
+    .zone-header.z1{border-left-color:var(--z1);background:#F8FBFF}
+    .zone-header.z2{border-left-color:var(--z2);background:#FAF8FF}
+    .zone-header.z3{border-left-color:var(--z3);background:#FFFBF5}
+    .zone-dot{width:10px;height:10px;border-radius:2px}
+    .zone-dot.z0{background:var(--z0)}
+    .zone-dot.z1{background:var(--z1)}
+    .zone-dot.z2{background:var(--z2)}
+    .zone-dot.z3{background:var(--z3)}
+    .zone-name{
+      font-family:var(--font);font-size:14px;font-weight:800;
+      letter-spacing:3px;text-transform:uppercase;flex:1;color:var(--text);
+    }
+    .zone-badge{
+      font-family:var(--mono);font-size:11px;color:var(--muted);
+      background:var(--surface3);border:1px solid var(--border);
+      border-radius:3px;padding:3px 9px;font-weight:600;
+    }
+
+    /* ── SUBCATEGORY HEADER ── */
+    .subcat-header{
+      display:flex;align-items:center;gap:8px;
+      padding:8px 14px 7px;margin-top:8px;
+      background:var(--surface3);
+      border-radius:3px;
+      border:1px solid var(--border2);
+    }
+    .subcat-name{
+      font-family:var(--font);font-size:11px;font-weight:700;
+      letter-spacing:2px;color:var(--accent);text-transform:uppercase;flex:1;
+    }
+    .subcat-pct{font-family:var(--mono);font-size:11px;color:var(--muted);font-weight:600}
+
+    /* ── CHECK ITEMS ── */
+    .check-item{
+      background:#FFFFFF;
+      border:1.5px solid var(--border2);
+      border-left:4px solid var(--border);
+      border-radius:4px;padding:13px;margin-bottom:8px;
+      box-shadow:var(--shadow-sm);
+      transition:border-color .15s,background .15s;
+    }
+    .check-item.state-ok{border-left-color:var(--success);background:#F8FDF9}
+    .check-item.state-fail{border-left-color:var(--danger);background:#FFF8F8}
+    .check-item.state-na{border-left-color:var(--border);opacity:.72}
+    .item-top{display:flex;align-items:flex-start;gap:10px}
+    .item-num{
+      font-family:var(--mono);font-size:10px;color:var(--muted);
+      min-width:44px;padding-top:3px;font-weight:600;
+    }
+    .item-label{
+      font-family:var(--font-body);font-size:14px;font-weight:500;
+      flex:1;line-height:1.4;color:var(--text);
+    }
+    .crit-badge{
+      font-family:var(--font);font-size:9px;font-weight:800;
+      padding:2px 7px;border-radius:3px;
+      background:#FEE2E2;border:1px solid #FCA5A5;
+      color:#991B1B;letter-spacing:1px;
+    }
+    .item-meta{display:flex;gap:6px;margin:7px 0 10px 54px;flex-wrap:wrap}
+    .meta-tag{
+      font-family:var(--mono);font-size:9px;color:var(--muted);
+      background:var(--surface3);border:1px solid var(--border2);
+      border-radius:3px;padding:2px 7px;
+    }
+
+    /* ── CHECK BUTTONS ── */
+    .check-btns{display:flex;gap:8px;margin-left:54px;margin-bottom:8px}
+    .chk-btn{
+      border:1.5px solid;border-radius:4px;padding:9px 0;
+      font-family:var(--font);font-size:12px;font-weight:800;
+      cursor:pointer;flex:1;text-align:center;
+      transition:all .15s;letter-spacing:1px;
+    }
+    .chk-btn:active{transform:scale(0.94)}
+    .chk-ok{background:#F0FDF4;border-color:#86EFAC;color:#166534}
+    .chk-ok.selected{background:var(--success);border-color:var(--success);color:#FFFFFF;box-shadow:0 2px 8px rgba(26,122,60,0.35)}
+    .chk-fail{background:#FFF0F0;border-color:#FCA5A5;color:#991B1B}
+    .chk-fail.selected{background:var(--danger);border-color:var(--danger);color:#FFFFFF;box-shadow:0 2px 8px rgba(192,57,43,0.35)}
+    .chk-na{background:var(--surface3);border-color:var(--border);color:var(--muted)}
+    .chk-na.selected{background:var(--muted);border-color:var(--muted);color:#FFFFFF}
+    .chk-custom{background:#F5F0FF;border-color:#C4B5FD;color:#5B21B6}
+    .chk-custom.selected{background:#6D28D9;border-color:#6D28D9;color:#FFFFFF}
+
+    /* ── AA SELECTOR ── */
+    .aa-selector{margin-left:54px;margin-top:8px;display:flex;align-items:center;gap:8px}
+    .aa-selector label{
+      font-family:var(--font);font-size:10px;font-weight:700;
+      color:var(--accent);background:var(--accent-light);
+      padding:3px 9px;border-radius:3px;
+      border:1px solid #FEDBB0;letter-spacing:1px;
+    }
+    .aa-selector select{
+      background:#FFFFFF;border:1.5px solid var(--border);border-radius:4px;
+      color:var(--text);font-family:var(--mono);font-size:11px;padding:5px 9px;
+    }
+
+    /* ── OBSERVATION AREA ── */
+    .obs-area{margin-top:8px;margin-left:54px;display:none}
+    .obs-area.show{display:block}
+    .obs-input{
+      width:100%;background:#FFFFFF;
+      border:1.5px solid #FCA5A5;border-radius:4px;
+      color:var(--text);padding:9px 13px;resize:vertical;min-height:54px;
+      font-family:var(--font-body);font-size:13px;
+    }
+
+    /* ── BOTTOM BAR ── */
+    .bottom-bar{
+      position:fixed;bottom:0;left:0;right:0;
+      background:#FFFFFF;
+      border-top:3px solid var(--border2);
+      border-top-left-radius:0;border-top-right-radius:0;
+      padding:12px 16px;
+      display:grid;grid-template-columns:1fr 1fr;gap:10px;
+      max-width:700px;margin:0 auto;
+      box-shadow:0 -4px 20px rgba(0,0,0,0.12);
+    }
+    .readonly-item{pointer-events:none;opacity:.7}
+
+    /* ── STREAK CARD ── */
+    .streak-card{
+      background:var(--header-bg);
+      border:2px solid rgba(199,91,0,0.4);
+      border-radius:6px;padding:22px;margin-bottom:16px;
+      text-align:center;color:#FFFFFF;
+      box-shadow:var(--shadow-md);
+      position:relative;overflow:hidden;
+    }
+    .streak-card::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:3px;
+      background:var(--accent);
+    }
+    .streak-value{
+      font-family:var(--mono);font-size:52px;font-weight:700;
+      color:var(--accent);line-height:1;
+    }
+
+    /* ── CALENDAR ── */
+    .calendar-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    .calendar-nav-btn{
+      background:var(--surface3);border:1.5px solid var(--border);
+      border-radius:4px;padding:7px 13px;cursor:pointer;
+      font-family:var(--font);font-weight:700;color:var(--text);
+    }
+    .calendar-month{
+      font-family:var(--font);font-size:17px;font-weight:800;
+      color:var(--text);letter-spacing:1px;
+    }
+    .calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:16px}
+    .calendar-weekday{
+      text-align:center;font-family:var(--font);
+      font-size:10px;font-weight:700;
+      color:var(--muted);padding:8px 4px;letter-spacing:1px;
+    }
+    .calendar-day{
+      aspect-ratio:1;background:#FFFFFF;
+      border:1.5px solid var(--border2);border-radius:4px;padding:4px;
+    }
+    .calendar-day.today{border:2px solid var(--accent);background:var(--accent-light)}
+    .calendar-day.day-ok{background:#ECFDF5;border-color:#6EE7B7}
+    .calendar-day.day-pending{background:#FFFBEB;border-color:#FCD34D}
+    .calendar-day.day-miss{background:#FEF2F2;border-color:#FCA5A5}
+    .calendar-day-num{font-family:var(--mono);font-size:11px;font-weight:700}
+    .calendar-day-status{font-size:8px;margin-top:2px}
+    .status-ok{color:var(--success);font-weight:700}
+    .status-pending{color:var(--warn);font-weight:700}
+    .calendar-legend{display:flex;gap:16px;justify-content:center;margin-bottom:16px;flex-wrap:wrap}
+    .legend-item{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600}
+    .legend-dot{width:12px;height:12px;border-radius:3px}
+    .legend-dot.ok{background:#6EE7B7}
+    .legend-dot.pending{background:#FCD34D}
+    .legend-dot.miss{background:#FCA5A5}
+
+    /* ── OPERARIO ROWS ── */
+    .operario-row{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:12px 14px;border:1px solid var(--border2);
+      background:#FFFFFF;border-radius:4px;margin-bottom:6px;
+      border-left:4px solid var(--accent);
+    }
+    .operario-info{flex:1}
+    .operario-name{font-family:var(--font);font-size:15px;font-weight:700;color:var(--text)}
+    .operario-keyuser{
+      font-family:var(--font);font-size:10px;font-weight:700;
+      color:var(--warn);margin-top:2px;letter-spacing:1px;
+    }
+    .operario-streak{
+      font-family:var(--mono);font-size:26px;font-weight:700;
+      color:var(--accent);min-width:60px;text-align:center;
+    }
+    .mini-calendar{display:flex;gap:3px;margin-top:8px;flex-wrap:wrap}
+    .mini-day{
+      width:20px;height:20px;border-radius:3px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:9px;font-weight:700;
+    }
+    .mini-day.ok{background:#ECFDF5;color:#065F46;border:1px solid #6EE7B7}
+    .mini-day.none{background:var(--surface3);border:1px solid var(--border2);color:var(--muted)}
+
+    /* ── ASSIGNMENT / AUDIT BANNERS ── */
+    .assign-banner{
+      background:#F8FBFF;border:1.5px solid #93C5FD;
+      border-left:4px solid #1D4ED8;
+      border-radius:4px;padding:12px 14px;margin-bottom:14px;
+    }
+    .audit-panel{
+      background:#FAF8FF;border:1.5px solid #C4B5FD;
+      border-left:4px solid var(--admin);
+      border-radius:4px;padding:12px 14px;margin-bottom:14px;
+    }
+
+    /* ── MISC ── */
+    .empty-state{text-align:center;padding:40px;color:var(--muted)}
+    .divider{height:1px;background:var(--border2);margin:16px 0}
+    .toast{
+      position:fixed;bottom:115px;left:50%;
+      transform:translateX(-50%) translateY(10px);
+      background:var(--header-bg);color:#FFFFFF;
+      border-left:3px solid var(--accent);
+      border-radius:4px;padding:10px 20px;
+      z-index:600;opacity:0;
+      transition:opacity .3s,transform .3s;
+      pointer-events:none;font-family:var(--font);
+      font-weight:700;font-size:13px;
+      white-space:nowrap;letter-spacing:1px;
+      box-shadow:var(--shadow-md);
+    }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    .toast.success{background:var(--success);border-left-color:#86EFAC}
+    .toast.error{background:var(--danger);border-left-color:#FCA5A5}
+
+    /* ── MODAL ── */
+    .modal-overlay{
+      position:fixed;inset:0;
+      background:rgba(0,0,0,0.55);
+      z-index:500;display:none;
+      align-items:flex-end;justify-content:center;
+    }
+    .modal-overlay.show{display:flex}
+    .modal{
+      background:#FFFFFF;
+      border-top:3px solid var(--accent);
+      border-radius:6px 6px 0 0;
+      width:100%;max-width:620px;
+      padding:24px;max-height:88vh;overflow-y:auto;
+      box-shadow:0 -8px 32px rgba(0,0,0,0.20);
+    }
+    .modal-title{
+      font-family:var(--font);font-size:13px;font-weight:800;
+      letter-spacing:2px;color:var(--accent);text-transform:uppercase;
+      margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;
+    }
+    .modal-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer}
+    .login-err{
+      background:#FEE2E2;border:1px solid #FCA5A5;
+      border-radius:4px;padding:10px 14px;
+      font-size:13px;color:#991B1B;display:none;
+      margin-bottom:14px;font-family:var(--font);font-weight:700;letter-spacing:1px;
+    }
+    .badge-audit{
+      background:#EDE9FE;border:1px solid #C4B5FD;
+      color:var(--admin);border-radius:3px;padding:2px 8px;
+      font-family:var(--font);font-size:10px;font-weight:700;
+      margin-left:8px;letter-spacing:1px;
+    }
+
+    /* ── ZONE PROGRESS BARS ── */
+    .zone-progress-wrap{margin:0 0 9px;background:var(--surface3);border-radius:2px;height:8px;overflow:hidden}
+    .zone-progress-fill{height:100%;border-radius:2px;transition:width .4s ease}
+    .zone-progress-fill.z0{background:linear-gradient(90deg,#991B1B,var(--z0))}
+    .zone-progress-fill.z1{background:linear-gradient(90deg,#1E40AF,var(--z1))}
+    .zone-progress-fill.z2{background:linear-gradient(90deg,#5B21B6,var(--z2))}
+    .zone-progress-fill.z3{background:linear-gradient(90deg,#92400E,var(--z3))}
+    .zone-progress-label{
+      display:flex;justify-content:space-between;align-items:center;
+      margin:2px 0 5px;
+      font-family:var(--font);font-size:10px;font-weight:700;
+      color:var(--muted);letter-spacing:1px;
+    }
+    .zone-complete-badge{
+      font-family:var(--font);font-size:9px;font-weight:800;
+      padding:2px 7px;border-radius:3px;letter-spacing:1px;
+      background:#ECFDF5;border:1px solid #6EE7B7;color:#065F46;margin-left:6px;
+    }
+
+    /* ── HISTORIAL ── */
+    .hist-card{
+      background:#FFFFFF;border:1.5px solid var(--border2);
+      border-left:4px solid var(--accent);
+      border-radius:4px;padding:14px;margin-bottom:8px;
+      cursor:pointer;transition:box-shadow .15s,border-color .15s;
+    }
+    .hist-card:hover{box-shadow:var(--shadow-md);border-left-color:var(--accent2)}
+    .hist-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .hist-id{font-family:var(--mono);font-size:11px;color:var(--accent);font-weight:700}
+    .hist-date{font-family:var(--mono);font-size:11px;color:var(--muted)}
+    .hist-meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+    .hist-tag{
+      font-family:var(--mono);font-size:10px;
+      background:var(--surface3);border:1px solid var(--border2);
+      border-radius:3px;padding:2px 8px;color:var(--muted);font-weight:600;
+    }
+    .hist-bar-wrap{display:flex;align-items:center;gap:8px}
+    .hist-bar-track{flex:1;height:7px;background:var(--surface3);border-radius:2px;overflow:hidden;display:flex}
+    .hb-ok{background:var(--success)}
+    .hb-fail{background:var(--danger)}
+    .hb-na{background:var(--border)}
+    .hist-pct{font-family:var(--mono);font-size:12px;font-weight:700;min-width:38px;text-align:right}
+
+    /* ── EDITOR ITEMS ── */
+    .editor-item{
+      background:var(--surface3);border:1px solid var(--border2);
+      border-radius:4px;padding:11px 13px;margin-bottom:8px;
+      display:flex;align-items:flex-start;gap:10px;
+    }
+    .editor-item-body{flex:1;min-width:0}
+    .editor-item-id{font-family:var(--mono);font-size:10px;color:var(--accent);margin-bottom:3px;font-weight:700}
+    .editor-item-label{font-family:var(--font-body);font-size:13px;font-weight:600;line-height:1.35;color:var(--text)}
+    .editor-item-meta{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap}
+    .editor-item-tag{
+      font-family:var(--mono);font-size:9px;color:var(--muted);
+      background:#FFFFFF;border:1px solid var(--border2);border-radius:3px;padding:1px 7px;
+    }
+    .editor-item-tag.crit{color:#991B1B;border-color:#FCA5A5;background:#FEE2E2}
+    .editor-item-tag.modified{color:#92400E;border-color:#FCD34D;background:#FEF9C3}
+    .btn-edit-item{
+      background:#FEF3C7;border:1px solid #FCD34D;
+      color:#92400E;border-radius:4px;padding:7px 11px;
+      cursor:pointer;font-size:12px;flex-shrink:0;font-weight:700;
+    }
+    .btn-opt-row{
+      display:flex;align-items:center;gap:8px;
+      background:var(--surface3);border:1px solid var(--border2);
+      border-radius:4px;padding:9px 11px;margin-bottom:8px;
+    }
+    .btn-opt-key{font-family:var(--mono);font-size:10px;color:var(--muted);min-width:36px}
+
+    /* ── LOGIN PAGE ── */
+    #loginPage{background:var(--bg)}
+  </style>
+</head>
+<body>
+
+<div id="appLoader" style="position:fixed;inset:0;background:#FFFFFF;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:20px">
+<script>
+// Detect file:// protocol and show instructions immediately
+if(location.protocol === 'file:') {
+  document.write('<div style="max-width:340px;padding:24px;font-family:sans-serif;text-align:center">' +
+    '<div style="font-size:36px;margin-bottom:12px">⚠️</div>' +
+    '<div style="font-size:16px;font-weight:700;color:#111;margin-bottom:8px">No se puede abrir como archivo local</div>' +
+    '<div style="font-size:13px;color:#555;line-height:1.6;margin-bottom:16px">Esta app necesita un servidor web para conectarse a Firebase.<br><br>' +
+    '<b>Opción rápida y gratuita:</b><br>Sube <code>index.html</code> a GitHub Pages.</div>' +
+    '<div style="background:#F0F2F5;border-radius:8px;padding:12px;font-size:12px;color:#333;text-align:left;line-height:2">' +
+    '1. Crea cuenta en <b>github.com</b><br>' +
+    '2. Nuevo repositorio → sube el archivo<br>' +
+    '3. Settings → Pages → Deploy from main<br>' +
+    '4. Tu URL: <b>tuusuario.github.io/repo</b>' +
+    '</div></div>');
+  throw new Error('file:// not supported');
+}
+</script>
+  <div style="font-size:44px;animation:spin 1.2s linear infinite">🔧</div>
+  <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:#C75B00;letter-spacing:3px;text-transform:uppercase">Conectando...</div>
+  <div id="loaderError" style="display:none;max-width:300px;text-align:center;background:#FEE2E2;border:1px solid #FCA5A5;border-radius:6px;padding:14px 18px;font-family:sans-serif;font-size:13px;color:#991B1B;line-height:1.5"></div>
+  <button id="loaderRetryBtn" onclick="location.reload()" style="display:none;background:#C75B00;color:#fff;border:none;border-radius:4px;padding:10px 24px;font-size:13px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:sans-serif">REINTENTAR</button>
+</div>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+
+<div id="loginPage" style="display:none;position:fixed;inset:0;background:#f0f2f5;z-index:100;align-items:center;justify-content:center;padding:24px">
+  <div style="max-width:380px;width:100%">
+    <div style="text-align:center;margin-bottom:32px">
+      <div style="width:60px;height:60px;background:linear-gradient(135deg,#c0620a,var(--accent));border-radius:16px;display:inline-flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:12px">🔧</div>
+      <div style="font-size:26px;font-weight:700">TMT1</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--accent)">CHECK LIST MOLDURERA</div>
+    </div>
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:24px;box-shadow:0 4px 16px rgba(0,0,0,0.08)">
+      <div style="font-size:13px;font-weight:600;letter-spacing:2px;color:var(--muted);margin-bottom:20px">Iniciar sesión</div>
+      <div class="login-err" id="loginErr"></div>
+      <div class="field"><label>Usuario</label><input type="text" id="loginUser" placeholder="Ej: ivanperez"></div>
+      <div class="field"><label>Contraseña</label><input type="password" id="loginPass"></div>
+      <button class="btn btn-primary" onclick="doLogin()">ENTRAR</button>
+    </div>
+  </div>
+</div>
+
+<div id="appShell" style="display:none">
+  <header class="header">
+    <div class="header-brand"><div class="header-icon">🔧</div><div><div class="header-title">TMT1</div><div class="header-sub">CHECK LIST</div></div></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div class="user-chip"><div class="user-chip-dot" id="userDot"></div><span id="userChipName">—</span></div>
+      <button class="btn-logout" onclick="doLogout()">✕</button>
+    </div>
+  </header>
+
+  <nav class="tab-nav">
+    <button class="tab-btn active" id="tab-checklist" onclick="switchTab('checklist')">📋 Check List</button>
+    <button class="tab-btn" id="tab-calendario" onclick="switchTab('calendario')">📅 Mi Calendario</button>
+    <button class="tab-btn" id="tab-historial" onclick="switchTab('historial')">📁 Historial</button>
+    <button class="tab-btn admin-tab" onclick="switchTab('admin')" id="tab-admin" style="display:none">👑 Admin</button>
+  </nav>
+
+  <div class="page active" id="page-checklist">
+    <div class="main-wrap">
+      <div id="assignBannerWrap"></div>
+      <div id="auditPanel" style="display:none" class="audit-panel">
+        <div class="grid2" style="gap:8px">
+          <div class="field" style="margin-bottom:0"><label>👤 Operario</label><select id="auditOperario" onchange="loadAuditChecklist()"><option value="">Seleccionar operario...</option></select></div>
+          <div class="field" style="margin-bottom:0"><label>📅 Fecha</label><input type="date" id="auditFecha" onchange="loadAuditChecklist()"></div>
+        </div>
+        <div style="font-size:11px;color:var(--admin);margin-top:8px;text-align:center">🔍 Modo Auditoría</div>
+      </div>
+      <div id="zoneProgressBars"></div>
+      <div id="statsBar" style="display:none;margin-bottom:14px">
+        <div style="background:var(--header-bg);border-radius:6px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-left:5px solid var(--accent);box-shadow:var(--shadow-md)">
+          <div>
+            <div style="font-family:var(--font);font-size:10px;font-weight:800;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:4px">Estándar Operacional</div>
+            <div style="font-family:var(--mono);font-size:48px;font-weight:700;line-height:1;color:#FFFFFF" id="statPct">0%</div>
+            <div style="font-family:var(--font);font-size:11px;color:#9CA3AF;margin-top:4px"><span id="statOk">0</span> OK de <span id="statTotal">0</span> ítems</div>
+          </div>
+          <div>
+            <div style="width:80px;height:80px;position:relative">
+              <svg viewBox="0 0 36 36" style="width:80px;height:80px;transform:rotate(-90deg)">
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#2D2D2D" stroke-width="3"/>
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--accent)" stroke-width="3"
+                  stroke-dasharray="0 100" stroke-linecap="round" id="statCircle" style="transition:stroke-dasharray .5s ease"/>
+              </svg>
+              <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;font-weight:700;color:#FFFFFF" id="statPctSmall">0%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="progress-wrap" id="progressWrap" style="display:none"><div class="progress-fill" id="progressFill"></div></div>
+      <div id="checklistBody"></div>
+      <div id="noAssignMsg" style="display:none"><div class="empty-state">📋 Sin asignación activa para este turno</div></div>
+    </div>
+    <div class="bottom-bar" id="clBottomBar" style="display:none">
+      <button class="btn btn-secondary" onclick="clearChecklist()">🗑 Limpiar</button>
+      <button class="btn btn-success" onclick="submitChecklist()">📊 Enviar Reporte</button>
+    </div>
+  </div>
+
+  <div class="page" id="page-calendario">
+    <div class="main-wrap">
+      <div class="streak-card"><div style="font-size:12px;color:#f5a623;font-weight:700;letter-spacing:2px;margin-bottom:8px">🔥 RACHA ACTUAL</div><div><span class="streak-value" id="currentStreak">0</span><span style="font-size:14px;margin-left:8px">días consecutivos</span></div><div style="margin-top:8px;font-size:12px" id="streakMsg"></div></div>
+      <div class="card"><div class="card-title">📅 Calendario de cumplimiento</div>
+        <div class="calendar-header"><div><button class="calendar-nav-btn" onclick="changeMonth(-1)">◀</button></div><span class="calendar-month" id="calendarMonth">Enero 2024</span><div><button class="calendar-nav-btn" onclick="goToday()">Hoy</button><button class="calendar-nav-btn" onclick="changeMonth(1)">▶</button></div></div>
+        <div class="calendar-legend"><div class="legend-item"><div class="legend-dot ok"></div><span>Check completado</span></div><div class="legend-item"><div class="legend-dot pending"></div><span>Pendiente (con turno)</span></div><div class="legend-item"><div class="legend-dot miss"></div><span>No completado</span></div></div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-historial">
+    <div class="main-wrap"><div id="historialBody"><div class="empty-state">Sin registros</div></div></div>
+  </div>
+
+  <div class="page" id="page-admin">
+    <div class="wide-wrap">
+      <div class="card"><div class="card-title admin-title">🔗 Key User → Operarios</div>
+        <div class="grid2" style="gap:8px;margin-bottom:10px"><select id="assignKeyUserSelect"></select><select id="assignKeyUserTarget"></select></div>
+        <button class="btn btn-admin btn-sm" onclick="assignKeyUser()" style="width:auto;padding:8px 16px">Asignar Key User</button>
+        <div class="divider"></div><div id="keyUserAssignmentsList"></div>
+      </div>
+      <div class="card"><div class="card-title admin-title">📊 Rachas por Operario</div>
+        <div class="field" style="margin-bottom:10px"><label>Filtrar por Key User</label><select id="filterByKeyUser" onchange="renderOperariosStreak()"><option value="">Todos</option></select></div>
+        <div id="operariosStreakList"></div>
+      </div>
+      <div class="card"><div class="card-title admin-title">📅 Asignaciones de Turno</div>
+        <div class="grid3" style="margin-bottom:10px"><div class="field"><label>Equipo</label><select id="asgEquipo"></select></div><div class="field"><label>Turno</label><select id="asgTurno"></select></div><div class="field"><label>Fecha</label><input type="date" id="asgFecha"></div></div>
+        <div class="field"><label>Operario</label><select id="asgUsuario"></select></div>
+        <button class="btn btn-admin" onclick="saveAssignment()">＋ ASIGNAR TURNO</button>
+        <div class="divider"></div><div id="assignmentsList"></div>
+      </div>
+      <div class="card" id="excelReportCard"><div class="card-title admin-title">📊 Reporte Diario Excel</div>
+        <div class="field"><label>Fecha</label><input type="date" id="reportFecha"></div>
+        <button class="btn btn-warn" onclick="exportarReporteExcel()">⬇️ DESCARGAR EXCEL</button>
+        <div id="exportStatus" style="margin-top:10px;font-family:var(--mono);font-size:12px;color:#6b7280;display:none"></div>
+      </div>
+      <div class="card"><div class="card-title admin-title">⚙️ Configuración</div>
+        <div class="grid2"><div><div style="font-size:11px;font-weight:700;margin-bottom:8px">Equipos</div><div id="equiposList"></div><div style="display:flex;gap:6px;margin-top:6px"><input type="text" id="newEquipoInput" placeholder="Nuevo equipo" style="flex:1"><button class="btn-admin btn-sm" onclick="addEquipo()" style="padding:6px 12px">＋</button></div></div>
+        <div><div style="font-size:11px;font-weight:700;margin-bottom:8px">Turnos</div><div id="turnosList"></div><div style="display:flex;gap:6px;margin-top:6px"><input type="text" id="newTurnoInput" placeholder="Nuevo turno" style="flex:1"><button class="btn-admin btn-sm" onclick="addTurno()" style="padding:6px 12px">＋</button></div></div></div>
+      </div>
+      <div class="card"><div class="card-title admin-title">👑 Usuarios</div>
+        <button class="btn btn-admin" style="margin-bottom:12px" onclick="openAddUser()">＋ AGREGAR USUARIO</button>
+        <div id="usersList"></div>
+      </div>
+      <div class="card">
+        <div class="card-title admin-title">✏️ Editor de Checklist</div>
+
+        <!-- TAB BAR -->
+        <div style="display:flex;border-bottom:2px solid var(--border2);margin-bottom:14px">
+          <button class="editor-tab active" id="etab-zonas" onclick="switchEditorTab('zonas')" style="flex:1;padding:9px;background:none;border:none;font-family:var(--font);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;cursor:pointer;color:var(--accent);border-bottom:3px solid var(--accent);margin-bottom:-2px">ZONAS / ÍTEMS</button>
+          <button class="editor-tab" id="etab-btns" onclick="switchEditorTab('btns')" style="flex:1;padding:9px;background:none;border:none;font-family:var(--font);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px">BOTONES</button>
+        </div>
+
+        <!-- TAB: ZONAS / ÍTEMS -->
+        <div id="epanel-zonas">
+          <!-- Zona selector + new zona button -->
+          <div style="display:flex;gap:8px;margin-bottom:10px;align-items:flex-end">
+            <div class="field" style="flex:1;margin-bottom:0">
+              <label>Zona</label>
+              <select id="editorZonaSelect" onchange="loadEditorZona()">
+                <option value="">Seleccionar zona...</option>
+              </select>
+            </div>
+            <button class="btn btn-admin btn-sm" onclick="openNewZona()" style="width:auto;white-space:nowrap">＋ Zona</button>
+          </div>
+
+          <!-- Zona actions (rename/delete) -->
+          <div id="zonaActions" style="display:none;margin-bottom:10px;display:none">
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-secondary btn-sm" onclick="openRenameZona()" style="width:auto">✏️ Renombrar zona</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteZona()" style="width:auto">🗑 Eliminar zona</button>
+            </div>
+          </div>
+
+          <!-- Subcategory + item list -->
+          <div id="editorItemsList"></div>
+
+          <!-- Add subcategory -->
+          <div id="addSubcatBar" style="display:none;margin-top:10px">
+            <button class="btn btn-secondary" onclick="openNewSubcat()" style="border-style:dashed">＋ Nueva subcategoría</button>
+          </div>
+        </div>
+
+        <!-- TAB: BOTONES -->
+        <div id="epanel-btns" style="display:none">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:12px">Personaliza los botones de respuesta que verán los operarios en cada ítem.</div>
+          <div id="btnOptionsPreview" style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap"></div>
+          <button class="btn btn-admin btn-sm" onclick="openEditBtnOptions()" style="width:auto">⚙️ Configurar botones</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALES -->
+<div class="modal-overlay" id="modalUser"><div class="modal"><div class="card-title admin-title" style="margin-bottom:16px"><span id="modalUserTitle">Nuevo Usuario</span><button class="modal-close" onclick="closeModal('modalUser')">✕</button></div><div class="login-err" id="addUserErr"></div><div class="field"><label>Nombre</label><input type="text" id="newUserName"></div><div class="field"><label>Usuario</label><input type="text" id="newUserUsername"></div><div class="field"><label>Contraseña</label><input type="password" id="newUserPass"></div><div class="field"><label>Rol</label><select id="newUserRole"><option value="user">Operario</option><option value="keyuser">Key User</option><option value="admin">Administrador</option></select></div><div class="field"><label>Key User asignado</label><select id="newUserKeyUser"><option value="">Ninguno</option></select></div><div class="grid2" style="margin-top:16px"><button class="btn btn-secondary" onclick="closeModal('modalUser')">Cancelar</button><button class="btn btn-admin" onclick="saveUser()">Guardar</button></div></div></div>
+
+<!-- Modal: Nueva/Editar Zona -->
+<div class="modal-overlay" id="modalZona"><div class="modal">
+  <div class="card-title admin-title" style="margin-bottom:16px"><span id="modalZonaTitle">Nueva Zona</span><button class="modal-close" onclick="closeModal('modalZona')">✕</button></div>
+  <div class="login-err" id="zonaErr"></div>
+  <div class="field"><label>ID de zona (ej: z4)</label><input type="text" id="zonaId" placeholder="z4"></div>
+  <div class="field"><label>Nombre</label><input type="text" id="zonaNombre" placeholder="ZONA 4 — NOMBRE"></div>
+  <div class="field"><label>Emoji</label><input type="text" id="zonaEmoji" placeholder="🟤" maxlength="4"></div>
+  <div class="grid2" style="margin-top:16px">
+    <button class="btn btn-secondary" onclick="closeModal('modalZona')">Cancelar</button>
+    <button class="btn btn-admin" onclick="saveZona()">Guardar</button>
+  </div>
+</div></div>
+
+<!-- Modal: Nueva/Editar Subcategoría -->
+<div class="modal-overlay" id="modalSubcat"><div class="modal">
+  <div class="card-title admin-title" style="margin-bottom:16px"><span id="modalSubcatTitle">Nueva Subcategoría</span><button class="modal-close" onclick="closeModal('modalSubcat')">✕</button></div>
+  <div class="login-err" id="subcatErr"></div>
+  <div class="field"><label>Nombre</label><input type="text" id="subcatNombre" placeholder="PROTECCIONES MECÁNICAS"></div>
+  <div class="grid2" style="margin-top:16px">
+    <button class="btn btn-secondary" onclick="closeModal('modalSubcat')">Cancelar</button>
+    <button class="btn btn-admin" onclick="saveSubcat()">Guardar</button>
+  </div>
+</div></div>
+
+<!-- Modal: Nuevo/Editar Ítem -->
+<div class="modal-overlay" id="modalEditItem"><div class="modal"><div class="modal">
+  <div class="card-title admin-title" style="margin-bottom:16px"><span id="modalItemTitle">Nuevo Ítem</span><button class="modal-close" onclick="closeModal('modalEditItem')">✕</button></div>
+  <div class="login-err" id="editItemErr"></div>
+  <div class="field"><label>Descripción</label><textarea id="editItemLabel" style="min-height:72px" placeholder="Revisar estado de..."></textarea></div>
+  <div class="grid2">
+    <div class="field"><label>Unidad de Control</label><input type="text" id="editItemCtrl" placeholder="Visual"></div>
+    <div class="field"><label>Tolerancia</label><input type="text" id="editItemTol" placeholder="Operativo"></div>
+  </div>
+  <div class="field"><label>Criticidad</label>
+    <select id="editItemCrit"><option value="false">No crítico</option><option value="true">CRÍTICO</option></select>
+  </div>
+  <div id="deleteItemRow" style="display:none;margin-bottom:10px">
+    <button class="btn btn-danger" onclick="deleteItem()">🗑 Eliminar ítem</button>
+  </div>
+  <div class="grid2">
+    <button class="btn btn-secondary" onclick="closeModal('modalEditItem')">Cancelar</button>
+    <button class="btn btn-admin" onclick="saveItemEdit()">Guardar</button>
+  </div>
+</div></div>
+
+<div class="modal-overlay" id="modalEditBtns"><div class="modal"><div class="card-title admin-title" style="margin-bottom:16px">Configurar Botones<button class="modal-close" onclick="closeModal('modalEditBtns')">✕</button></div><div id="btnOptionsList"></div><button class="btn btn-secondary" onclick="addBtnOption()" style="margin-top:8px">＋ Agregar opción</button><div class="divider"></div><div id="btnOptionsModalPreview" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"></div><div class="grid2"><button class="btn btn-secondary" onclick="closeModal('modalEditBtns')">Cancelar</button><button class="btn btn-admin" onclick="saveBtnOptions()">Guardar</button></div></div></div>
+
+<div class="modal-overlay" id="modalReport"><div class="modal"><div class="card-title" style="margin-bottom:16px">Reporte<button class="modal-close" onclick="closeModal('modalReport')">✕</button></div><div id="reportBody"></div><div class="grid2"><button class="btn btn-secondary" onclick="closeModal('modalReport')">Cerrar</button><button class="btn btn-primary" onclick="copyReport()">Copiar</button></div></div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+// ═══════════════════════════════════════════════════════════
+// FIREBASE REST IMPLEMENTATION — no external scripts needed
+// ═══════════════════════════════════════════════════════════
+const firebaseConfig = {
+  apiKey:"AIzaSyDfS5FDJmEATRy6wss5iRY8Db1mJLGtSjg",
+  authDomain:"checklist-molduras.firebaseapp.com",
+  projectId:"checklist-molduras",
+  storageBucket:"checklist-molduras.firebasestorage.app",
+  messagingSenderId:"508132017954",
+  appId:"1:508132017954:web:7e6ad187a0cc424707077b"
+};
+
+const PROJECT = firebaseConfig.projectId;
+const API_KEY = firebaseConfig.apiKey;
+const AUTH_URL = `https://identitytoolkit.googleapis.com/v1/accounts`;
+const FS_URL   = `https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents`;
+
+// ── Auth state ──
+let _idToken = null, _tokenExpiry = 0, _authUser = null;
+let _authCallbacks = [];
+let _authResolved = false;
+
+function _authHeaders() {
+  return { 'Content-Type': 'application/json', ..._idToken ? { Authorization: 'Bearer ' + _idToken } : {} };
+}
+
+async function _refreshToken(refreshToken) {
+  const r = await fetch(`https://securetoken.googleapis.com/v1/token?key=${API_KEY}`, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ grant_type:'refresh_token', refresh_token: refreshToken })
+  });
+  const d = await r.json();
+  if (d.id_token) {
+    _idToken = d.id_token;
+    _tokenExpiry = Date.now() + (parseInt(d.expires_in) - 60) * 1000;
+    localStorage.setItem('fb_refresh', d.refresh_token);
+    localStorage.setItem('fb_uid', d.user_id);
+  }
+  return d;
+}
+
+async function _ensureToken() {
+  if (_idToken && Date.now() < _tokenExpiry) return;
+  const rt = localStorage.getItem('fb_refresh');
+  if (rt) await _refreshToken(rt);
+}
+
+const auth = {
+  currentUser: null,
+  async signInWithEmailAndPassword(email, password) {
+    const r = await fetch(`${AUTH_URL}:signInWithPassword?key=${API_KEY}`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email, password, returnSecureToken: true })
+    });
+    const d = await r.json();
+    if (d.error) throw new Error(d.error.message);
+    _idToken = d.idToken;
+    _tokenExpiry = Date.now() + (parseInt(d.expiresIn) - 60) * 1000;
+    localStorage.setItem('fb_refresh', d.refreshToken);
+    localStorage.setItem('fb_uid', d.localId);
+    _authUser = { uid: d.localId, email: d.email };
+    auth.currentUser = _authUser;
+    _authCallbacks.forEach(cb => cb(_authUser));
+    return { user: _authUser };
+  },
+  async createUserWithEmailAndPassword(email, password) {
+    await _ensureToken();
+    const r = await fetch(`${AUTH_URL}:signUp?key=${API_KEY}`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email, password, returnSecureToken: true })
+    });
+    const d = await r.json();
+    if (d.error) throw new Error(d.error.message);
+    return { user: { uid: d.localId, email: d.email } };
+  },
+  async signOut() {
+    _idToken = null; _authUser = null; auth.currentUser = null;
+    localStorage.removeItem('fb_refresh');
+    localStorage.removeItem('fb_uid');
+    _authCallbacks.forEach(cb => cb(null));
+  },
+  onAuthStateChanged(cb) {
+    _authCallbacks.push(cb);
+    // Try auto-login from stored refresh token
+    const rt = localStorage.getItem('fb_refresh');
+    if (rt) {
+      _refreshToken(rt).then(d => {
+        if (d.id_token) {
+          _authUser = { uid: localStorage.getItem('fb_uid'), email: '' };
+          auth.currentUser = _authUser;
+          cb(_authUser);
+        } else {
+          localStorage.removeItem('fb_refresh');
+          cb(null);
+        }
+      }).catch(() => cb(null));
+    } else {
+      setTimeout(() => cb(null), 50);
+    }
+  }
+};
+
+// ── Firestore helpers ──
+function _toFS(val) {
+  if (val === null || val === undefined) return { nullValue: null };
+  if (typeof val === 'boolean') return { booleanValue: val };
+  if (typeof val === 'number') return Number.isInteger(val) ? { integerValue: String(val) } : { doubleValue: val };
+  if (typeof val === 'string') return { stringValue: val };
+  if (val && val.__serverTimestamp) return { timestampValue: new Date().toISOString() };
+  if (val instanceof Date) return { timestampValue: val.toISOString() };
+  if (Array.isArray(val)) return { arrayValue: { values: val.map(_toFS) } };
+  if (typeof val === 'object') return { mapValue: { fields: Object.fromEntries(Object.entries(val).map(([k,v]) => [k, _toFS(v)])) } };
+  return { stringValue: String(val) };
+}
+
+function _fromFS(fields) {
+  if (!fields) return {};
+  const out = {};
+  for (const [k, v] of Object.entries(fields)) {
+    if ('stringValue'  in v) out[k] = v.stringValue;
+    else if ('integerValue' in v) out[k] = parseInt(v.integerValue);
+    else if ('doubleValue'  in v) out[k] = v.doubleValue;
+    else if ('booleanValue' in v) out[k] = v.booleanValue;
+    else if ('nullValue'    in v) out[k] = null;
+    else if ('timestampValue' in v) out[k] = v.timestampValue;
+    else if ('arrayValue'   in v) out[k] = (v.arrayValue.values || []).map(x => _fromFS({_:x})._);
+    else if ('mapValue'     in v) out[k] = _fromFS(v.mapValue.fields);
+  }
+  return out;
+}
+
+function _docSnap(raw) {
+  const id = (raw.name || '').split('/').pop();
+  const data = _fromFS(raw.fields || {});
+  return { id, exists: () => !!raw.fields, data: () => data };
+}
+
+// ── Collection / Doc references ──
+function _ref(path) {
+  // path is array like ['collection','id','subcollection','id2',...]
+  return { __path: path };
+}
+
+function collection(db_or_ref, ...segs) {
+  const base = db_or_ref.__path || [];
+  return _ref([...base, ...segs]);
+}
+
+function doc(db_or_ref, ...segs) {
+  return collection(db_or_ref, ...segs);
+}
+
+function where(field, op, val) { return { type:'where', field, op, val }; }
+function orderBy(field, dir)   { return { type:'orderBy', field, dir: dir||'ASCENDING' }; }
+function query(ref, ...constraints) { return { ...ref, __constraints: constraints }; }
+
+const db = { __path: [] };
+const serverTimestamp = () => ({ __serverTimestamp: true });
+
+async function _colPath(ref) {
+  const parts = ref.__path;
+  return parts.join('/');
+}
+
+async function getDoc(ref) {
+  await _ensureToken();
+  const path = ref.__path.join('/');
+  const r = await fetch(`${FS_URL}/${path}`, { headers: _authHeaders() });
+  if (r.status === 404) return { id: path.split('/').pop(), exists: () => false, data: () => ({}) };
+  const d = await r.json();
+  return _docSnap(d);
+}
+
+async function getDocs(ref) {
+  await _ensureToken();
+  const constraints = ref.__constraints || [];
+  const colPath = ref.__path.join('/');
+
+  // Use runQuery for filtered queries, list for simple collection reads
+  const filters = constraints.filter(c => c.type === 'where');
+  const orders   = constraints.filter(c => c.type === 'orderBy');
+
+  if (filters.length > 0 || orders.length > 0) {
+    // Build structured query
+    const opMap = { '==':'EQUAL', '!=':'NOT_EQUAL', '<':'LESS_THAN', '<=':'LESS_THAN_OR_EQUAL', '>':'GREATER_THAN', '>=':'GREATER_THAN_OR_EQUAL', 'array-contains':'ARRAY_CONTAINS' };
+    const body = { structuredQuery: {
+      from: [{ collectionId: ref.__path[ref.__path.length - 1] }],
+      where: filters.length === 1
+        ? { fieldFilter: { field: { fieldPath: filters[0].field }, op: opMap[filters[0].op]||'EQUAL', value: _toFS(filters[0].val) } }
+        : filters.length > 1
+        ? { compositeFilter: { op:'AND', filters: filters.map(f => ({ fieldFilter: { field:{ fieldPath: f.field }, op: opMap[f.op]||'EQUAL', value: _toFS(f.val) } })) } }
+        : undefined,
+      orderBy: orders.map(o => ({ field: { fieldPath: o.field }, direction: o.dir || 'ASCENDING' }))
+    }};
+    if (!body.structuredQuery.where) delete body.structuredQuery.where;
+
+    // Run from root (Firestore runQuery runs from database root for root collections)
+    const url = `${FS_URL}:runQuery`.replace('/documents:runQuery', ':runQuery');
+    // Actually use database-level runQuery endpoint
+    const dbUrl = `https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default):runQuery`;
+    const urlFinal = dbUrl;
+    const r = await fetch(urlFinal, { method:'POST', headers: _authHeaders(), body: JSON.stringify(body) });
+    const arr = await r.json();
+    const docs = (Array.isArray(arr) ? arr : [arr])
+      .filter(x => x.document)
+      .map(x => _docSnap(x.document));
+    return { empty: docs.length === 0, docs };
+  } else {
+    const r = await fetch(`${FS_URL}/${colPath}?pageSize=500`, { headers: _authHeaders() });
+    const d = await r.json();
+    const docs = (d.documents || []).map(_docSnap);
+    return { empty: docs.length === 0, docs };
+  }
+}
+
+async function addDoc(ref, data) {
+  await _ensureToken();
+  const colPath = ref.__path.join('/');
+  const fields = Object.fromEntries(Object.entries(data).map(([k,v]) => [k, _toFS(v)]));
+  const r = await fetch(`${FS_URL}/${colPath}`, {
+    method:'POST', headers: _authHeaders(), body: JSON.stringify({ fields })
+  });
+  const d = await r.json();
+  return { id: (d.name||'').split('/').pop() };
+}
+
+async function setDoc(ref, data, opts) {
+  await _ensureToken();
+  const path = ref.__path.join('/');
+  const fields = Object.fromEntries(Object.entries(data).map(([k,v]) => [k, _toFS(v)]));
+  const merge = opts && opts.merge;
+  const url = merge
+    ? `${FS_URL}/${path}?updateMask.fieldPaths=${Object.keys(data).join('&updateMask.fieldPaths=')}`
+    : `${FS_URL}/${path}`;
+  const method = 'PATCH';
+  const r = await fetch(url, { method, headers: _authHeaders(), body: JSON.stringify({ fields }) });
+  return await r.json();
+}
+
+async function updateDoc(ref, data) {
+  await _ensureToken();
+  const path = ref.__path.join('/');
+  const fields = Object.fromEntries(Object.entries(data).map(([k,v]) => [k, _toFS(v)]));
+  const mask = Object.keys(data).map(k => `updateMask.fieldPaths=${encodeURIComponent(k)}`).join('&');
+  const r = await fetch(`${FS_URL}/${path}?${mask}`, {
+    method:'PATCH', headers: _authHeaders(), body: JSON.stringify({ fields })
+  });
+  return await r.json();
+}
+
+async function deleteDoc(ref) {
+  await _ensureToken();
+  const path = ref.__path.join('/');
+  await fetch(`${FS_URL}/${path}`, { method:'DELETE', headers: _authHeaders() });
+}
+
+// ── Auth shims matching the app's calling convention ──
+const signInWithEmailAndPassword = (a, email, pass) => a.signInWithEmailAndPassword(email, pass);
+const createUserWithEmailAndPassword = (a, email, pass) => a.createUserWithEmailAndPassword(email, pass);
+const signOut = (a) => a.signOut();
+const onAuthStateChanged = (a, cb) => a.onAuthStateChanged(cb);
+
+// Secondary auth for creating users (admin)
+async function _getSecondaryAuth_createUser(email, password) {
+  const r = await fetch(`${AUTH_URL}:signUp?key=${API_KEY}`, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ email, password, returnSecureToken: true })
+  });
+  const d = await r.json();
+  if (d.error) throw new Error(d.error.message);
+  return { user: { uid: d.localId, email: d.email } };
+}
+
+// Safety timeout: show error if Firebase never responds in 10s
+const _loaderTimeout = setTimeout(() => {
+  const loaderEl = document.getElementById('appLoader');
+  if (loaderEl && loaderEl.style.display !== 'none') {
+    document.getElementById('loaderError').style.display = 'block';
+    document.getElementById('loaderError').textContent = 'No se pudo conectar con el servidor. Verifica tu conexión a internet e intenta de nuevo.';
+    document.getElementById('loaderRetryBtn').style.display = 'inline-block';
+  }
+}, 10000);
+
+function _hideLoader() {
+  clearTimeout(_loaderTimeout);
+  const el = document.getElementById('appLoader');
+  if(el) el.style.display = 'none';
+}
+function _loaderMsg(msg) {
+  const el = document.getElementById('appLoader');
+  if(el) { const t = el.querySelectorAll('div')[1]; if(t) t.textContent = msg; }
+}
+
+onAuthStateChanged(auth, async user => {
+  if(user) {
+    try {
+      currentUser = user;
+      _loaderMsg('Cargando perfil...');
+      const snap = await getDoc(doc(db,'users',user.uid));
+      if(!snap.exists()) { await doLogout(); return; }
+      const data = snap.data();
+      currentRole = data.role || 'user';
+      currentName = data.name || data.username;
+      _loaderMsg('Cargando datos...');
+      await loadAllUsers();
+      await loadAllCheckRecords();
+      await loadAssignments();
+      await loadConfig();
+      await loadChecklistConfig();
+      _hideLoader();
+      document.getElementById('loginPage').style.display = 'none';
+      document.getElementById('appShell').style.display = 'block';
+      document.getElementById('userDot').className = 'user-chip-dot ' + currentRole;
+      document.getElementById('userChipName').textContent = currentName;
+      const prevEl = document.getElementById('btnOptionsPreview');
+      if(prevEl) renderBtnOptionsPreview(prevEl);
+      if(currentRole === 'admin' || currentRole === 'keyuser') {
+        document.getElementById('tab-admin').style.display = 'block';
+        document.getElementById('auditPanel').style.display = 'block';
+        const auditFecha = document.getElementById('auditFecha');
+        if(auditFecha) auditFecha.value = new Date().toISOString().split('T')[0];
+        renderKeyUserAssignmentsList();
+        renderOperariosStreak();
+        const keyUserFilter = document.getElementById('filterByKeyUser');
+        if(keyUserFilter) {
+          const keyUsers = Object.values(allUsers).filter(u => u.role === 'keyuser');
+          keyUserFilter.innerHTML = '<option value="">Todos</option>' + keyUsers.map(ku => `<option value="${ku.uid}">${ku.name || ku.username}</option>`).join('');
+        }
+        const excelCard = document.getElementById('excelReportCard');
+        if(excelCard) excelCard.style.display = currentRole === 'admin' ? 'block' : 'none';
+      } else {
+        document.getElementById('auditPanel').style.display = 'none';
+      }
+      await loadOperarioChecklist();
+      await loadHistorial();
+      renderCalendar();
+    } catch(err) {
+      console.error('Error al inicializar app:', err);
+      _hideLoader();
+      document.getElementById('loaderError').style.display = 'block';
+      document.getElementById('loaderError').textContent = 'Error al cargar la app: ' + (err.message || err);
+      document.getElementById('loaderRetryBtn').style.display = 'inline-block';
+      document.getElementById('appLoader').style.display = 'flex';
+    }
+  } else {
+    _hideLoader();
+    document.getElementById('loginPage').style.display = 'flex';
+    document.getElementById('appShell').style.display = 'none';
+  }
+});
+
+document.getElementById('asgFecha').value = new Date().toISOString().split('T')[0];
+document.getElementById('reportFecha').value = new Date().toISOString().split('T')[0];
+
+
+let currentUser = null, currentRole = 'user', currentName = '';
+let allUsers = {};
+let answers = {};
+let currentAssignment = null;
+let _allAssignments = [];
+let allCheckRecords = [];
+let currentCalendarDate = new Date();
+let editingUserId = null;
+let isAuditMode = false;
+let auditTargetUserId = null;
+let auditTargetFecha = null;
+let _reportRecord = null;
+
+let _itemOverrides = {};
+let _btnOptions = null;
+let _editingItemId = null;
+let _tempBtnOptions = [];
+
+const DEFAULT_BTN_OPTIONS = [
+  { key:'ok', label:'✓ OK', type:'ok' },
+  { key:'fail', label:'✗ FALLA', type:'fail' },
+  { key:'na', label:'— N/A', type:'na' }
+];
+
+// ==================== ZONAS COMPLETAS CON TODOS LOS ÍTEMS SEGÚN LISTADO ====================
+const ZONAS = [
+  { id:'z0', name:'MOLDURERA', color:'z0', emoji:'🔴', subcats:[
+    { id:'1.1', name:'PROTECCIONES MECÁNICAS', items:[
+      {id:'1.1.1',label:'Revisar estado de rejas cierre perimetral sistema de alimentación',ctrl:'Visual',tol:'Operativo',crit:true},
+      {id:'1.1.2',label:'Revisar cierre de seguridad rejas de rodillos sist. alimentación moldurera',ctrl:'Visual',tol:'Operativo',crit:true},
+    ]},
+    { id:'1.2', name:'PARADAS DE EMERGENCIA', items:[
+      {id:'1.2.1',label:'Revisar estado de botoneras de emergencia de moldurera',ctrl:'Visual',tol:'Operativo',crit:true},
+    ]},
+    { id:'1.3', name:'PROTECCIONES ELÉCTRICAS', items:[
+      {id:'1.3.1',label:'Revisar funcionamiento de sensor capota moldurera',ctrl:'Visual',tol:'Operativo',crit:true},
+    ]},
+    { id:'1.4', name:'MESA ALIMENTACIÓN', items:[
+      {id:'1.4.1',label:'Revisar estado rodillos inferiores alimentación moldurera',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'1.4.2',label:'Revisar estado ruedas superiores alimentación moldurera',ctrl:'Visual',tol:'Operativo',crit:false},
+    ]},
+    { id:'1.5', name:'SISTEMA DE AVANCE', items:[
+      {id:'1.5.1',label:'Revisar estado ruedas de arrastre interior moldurera',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'1.5.2',label:'Revisar estado de juego o desgaste de uniones cardánicas',ctrl:'Visual',tol:'Operativo',crit:false},
+    ]},
+    { id:'1.6', name:'CENTRO MÁQUINA MOLDURERA', items:[
+      {id:'1.6.1',label:'Revisar estado y ajuste de guía de entrada interior moldurera',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'1.6.2',label:'Revisar estado y perno de ajuste de cargadores interior moldurera',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'1.6.3',label:'Revisar estado y perno de ajuste quiebra virutas interior moldurera',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'1.6.4',label:'Revisar estado y perno de ajuste de zapatas interior moldurera',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'1.6.5',label:'Revisar estado y perno de ajuste de guías laterales exteriores moldurera',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'1.6.6',label:'Revisar estado de tornillo de ajuste mesa husillo 2',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'1.6.7',label:'Revisar estado tornillo de ajuste guía lateral husillo 2',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'1.6.8',label:'Revisar estado de todas las tapas Hidrocentrantes y pernos de ajustes',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'1.6.9',label:'Revisar estado de todos los Husillos 1-2-3-4-5',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'1.6.10',label:'Revisar estado de tornillos de ajustes axiales husillos',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'1.6.11',label:'Revisar estado de tornillos de ajustes radiales husillos',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'1.6.12',label:'Revisar estado de tubería y flexible de succión y aspiración de los husillos',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'1.6.13',label:'Revisar estado de correas transmisoras de motor a husillo detrás moldurera',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'1.6.14',label:'Revisar estado del límite de ajuste de altura de puente de moldurera',ctrl:'Visual',tol:'Operativo',crit:false},
+    ]},
+    { id:'1.7', name:'ELEMENTOS ELÉCTRICOS', items:[
+      {id:'1.7.1',label:'Revisar estado tablero de control mesa de alimentación',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'1.7.2',label:'Revisar estado tablero de control moldurera',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'1.7.3',label:'Revisar estado tablero de control sistema de optimización de velocidades',ctrl:'Visual',tol:'Operativo',crit:false},
+    ]},
+    { id:'1.8', name:'ELEMENTOS OPERATIVOS', items:[
+      {id:'1.8.1',label:'Revisar estado de presión de aire comprimido de la moldurera',ctrl:'Visual',tol:'6 bar',crit:false},
+      {id:'1.8.2',label:'Revisar estado de grasera (manómetro y boquillas)',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'1.8.3',label:'Revisar estado pie de metro',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'1.8.4',label:'Revisar que esté en el equipo ficha técnica y calibre pasa/no pasa del perfil',ctrl:'Visual',tol:'Operativo',crit:true},
+      {id:'1.8.5',label:'Revisar estado de elementos de corte (calamina, rugosidad del material)',ctrl:'Calidad',tol:'Operativo',crit:true},
+    ]},
+  ]},
+  { id:'z1', name:'ZONA 1 — TÁNDEM', color:'z1', emoji:'🔵', subcats:[
+    { id:'2.1', name:'PROTECCIONES MECÁNICAS', items:[
+      {id:'2.1.1',label:'Revisar estado de reja del tope ingreso mesa enfriamiento',ctrl:'Visual',tol:'Operativo',crit:true},
+    ]},
+    { id:'2.2', name:'PARADAS DE EMERGENCIA', items:[
+      {id:'2.2.1',label:'Revisar estado de botoneras de emergencia caja de aplicación y secador 1',ctrl:'Visual',tol:'Operativo',crit:true},
+    ]},
+    { id:'2.3', name:'PROTECCIONES ELÉCTRICAS', items:[
+      {id:'2.3.1',label:'Revisar estado y funcionamiento de barreras láser ingreso horno 1',ctrl:'Visual',tol:'Operativo',crit:true},
+      {id:'2.3.2',label:'Revisar estado y funcionamiento de barreras láser salida horno 1',ctrl:'Visual',tol:'Operativo',crit:true},
+    ]},
+    { id:'2.4', name:'CENTRO MÁQUINA ZONA 1', items:[
+      {id:'2.4.1',label:'Revisar estado de guías caja de aplicación de pasta',ctrl:'Visual',tol:'Operativo',crit:true},
+      {id:'2.4.2',label:'Revisar estado de hilos axial y radial de ajuste de caja trefila',ctrl:'Visual',tol:'Operativo',crit:true},
+      {id:'2.4.3',label:'Revisar estado pernos fijación contraperfil y acrílico de caja de aplicación',ctrl:'Visual',tol:'Operativo',crit:true},
+      {id:'2.4.4',label:'Revisar estado correa y alineación de transporte 1, 2 y 3',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'2.4.5',label:'Revisar estado de fundas y correas rodillos ingreso horno 1',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'2.4.6',label:'Revisar estado de espadas de traspaso ingreso horno 1',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'2.4.7',label:'Revisar estado de rieles y guías de cadenas interior horno 1',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'2.4.8',label:'Revisar estado de correa transporte salida horno 1 y salida mesa enfriamiento',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'2.4.9',label:'Revisar estado piñones de cadenas ingreso y salida horno 1',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'2.4.10',label:'Revisar estado de rieles y guías cadenas mesa enfriamiento',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'2.4.11',label:'Revisar estado ruedas de transporte salida horno 1 y salida mesa enfriamiento',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'2.4.12',label:'Revisar estado de espadas ingreso a mesa de enfriamiento',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'2.4.13',label:'Revisar piñones de cadenas mesa enfriamiento',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'2.4.14',label:'Revisar estado ruedas de transporte salida mesa de enfriamiento',ctrl:'Visual',tol:'Operativo',crit:false},
+    ]},
+    { id:'2.5', name:'ELEMENTOS ELÉCTRICOS ZONA 1', items:[
+      {id:'2.5.1',label:'Revisar estado botoneras y pantalla HMI panel de control zona 1',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'2.5.2',label:'Revisar estado y funcionamiento de espadas ingreso horno 1',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'2.5.3',label:'Revisar estado inyectores de aire horno 1',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'2.5.4',label:'Revisar estado de extractores de aire horno 1',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'2.5.5',label:'Revisar estado de quemador de gas horno 1',ctrl:'Visual',tol:'Operativo',crit:false},
+    ]},
+    { id:'2.6', name:'ELEMENTOS OPERATIVOS ZONA 1', items:[
+      {id:'2.6.1',label:'Revisar estado contraperfil y recambio en máquina',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'2.6.2',label:'Revisar estado de Rulina y aplicación de pasta en molduras',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'2.6.3',label:'Revisar calidad en mesa de enfriamiento',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'2.6.4',label:'Revisar ubicación de sopladores salida de moldurera',ctrl:'Visual',tol:'Operativo',crit:false},
+    ]},
+  ]},
+  { id:'z2', name:'ZONA 2 — TÁNDEM', color:'z2', emoji:'🟣', subcats:[
+    { id:'3.1', name:'PROTECCIONES MECÁNICAS', items:[
+      {id:'3.1.1',label:'Revisar estado de todas las campanas de rodillos de lijado',ctrl:'Visual',tol:'Operativo',crit:true},
+      {id:'3.1.2',label:'Revisar estado tapa de protección ruedas de arrastre trefila 2',ctrl:'Visual',tol:'Operativo',crit:true},
+    ]},
+    { id:'3.2', name:'PARADAS DE EMERGENCIA', items:[
+      {id:'3.2.1',label:'Revisar botoneras emergencia mesa enfriamiento, trefila, lijadora y horno 2',ctrl:'Visual',tol:'Operativo',crit:true},
+    ]},
+    { id:'3.3', name:'PROTECCIONES ELÉCTRICAS', items:[
+      {id:'3.3.1',label:'Revisar estado de barreras láser ingreso horno 2 y salida horno 2',ctrl:'Visual',tol:'Operativo',crit:true},
+    ]},
+    { id:'3.4', name:'CENTRO MÁQUINA ZONA 2', items:[
+      {id:'3.4.1',label:'Revisar estado y alineación de correa transporte 5,6,7,8 salida horno 2',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'3.4.2',label:'Revisar estado de motores de lijado 1,2,3,4',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'3.4.3',label:'Revisar estado de ajuste de ruedas cargadoras',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'3.4.4',label:'Revisar estado de guías laterales de lijadora',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'3.4.6',label:'Revisar estado de ajuste de guías inferiores lijadora',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'3.4.7',label:'Revisar estado de tuercas de ajuste de rodillos cabezal 1-2-3-4',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'3.4.8',label:'Revisar estado de hilos axial, radial y ángulo de cabezales',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'3.4.9',label:'Revisar estado de sistema de avance trefila 2 ruedas y rodillos',ctrl:'Visual',tol:'Operativo',crit:true},
+      {id:'3.4.10',label:'Revisar estado de hilos axial y radial de ajuste de caja trefila',ctrl:'Visual',tol:'Operativo',crit:true},
+      {id:'3.4.11',label:'Revisar estado pernos fijación contraperfil y acrílico de caja trefila',ctrl:'Visual',tol:'Operativo',crit:true},
+      {id:'3.4.12',label:'Revisar estado de rieles, guías de cadenas y piñones en secador 2',ctrl:'Visual',tol:'Operativo',crit:false},
+    ]},
+    { id:'3.5', name:'ELEMENTOS ELÉCTRICOS ZONA 2', items:[
+      {id:'3.5.1',label:'Revisar estado botoneras y pantalla HMI panel de control zona 2',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'3.5.2',label:'Revisar estado botoneras y pantalla HMI panel de control lijadora',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'3.5.3',label:'Revisar estado inyectores de aire horno 2',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'3.5.4',label:'Revisar estado extractores de aire horno 2',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'3.5.5',label:'Revisar estado quemador de gas horno 2',ctrl:'Visual',tol:'Operativo',crit:false},
+    ]},
+    { id:'3.6', name:'ELEMENTOS OPERATIVOS ZONA 2', items:[
+      {id:'3.6.1',label:'Revisar estado de Rulina y aplicación de pasta en molduras',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'3.6.2',label:'Revisar correcta aplicación de pasta en mesa de enfriamiento',ctrl:'Visual',tol:'Operativo',crit:true},
+      {id:'3.6.3',label:'Revisar ubicación de sopladores ingreso caja trefila 2',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'3.6.4',label:'Revisar estado contraperfil y recambio en máquina',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'3.6.5',label:'Revisar calidad en mesa de clasificación',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'3.6.6',label:'Revisar estado de desgaste de la muela y diseño del perfil',ctrl:'Visual',tol:'Operativo',crit:false},
+    ]},
+  ]},
+  { id:'z3', name:'ZONA 3 — EMBALAJE', color:'z3', emoji:'🟡', subcats:[
+    { id:'4.1', name:'PROTECCIONES MECÁNICAS', items:[
+      {id:'4.1.1',label:'Revisar estado de rejas de protección de rodillos',ctrl:'Visual',tol:'Operativo',crit:true},
+    ]},
+    { id:'4.2', name:'PARADAS DE EMERGENCIA', items:[
+      {id:'4.2.1',label:'Revisar estado de paradas de emergencia de mesa clasificación',ctrl:'Visual',tol:'Operativo',crit:true},
+    ]},
+    { id:'4.3', name:'PROTECCIONES ELÉCTRICAS', items:[
+      {id:'4.3.1',label:'Revisar estado de barreras láser de ingreso a mesa de clasificación',ctrl:'Visual',tol:'Operativo',crit:true},
+    ]},
+    { id:'4.4', name:'CENTRO MÁQUINA EMBALAJE', items:[
+      {id:'4.4.1',label:'Revisar estado de ajuste y desgaste de guías lateral transporte 8',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'4.4.2',label:'Revisar estado de correa de transporte 8',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'4.4.3',label:'Revisar estado de cargadores de etiquetadora en transporte 8',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'4.4.4',label:'Revisar estado de rodillos ingreso mesa clasificación',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'4.4.5',label:'Revisar estado espadas de traspaso ingreso mesa de clasificación',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'4.4.6',label:'Revisar estado de tope ingreso mesa de clasificación',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'4.4.7',label:'Revisar estado de rieles de mesa de clasificación',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'4.4.8',label:'Revisar estado de cadenas de rieles mesa clasificación',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'4.4.9',label:'Revisar estado de mesa de rodillos armado de paquetes',ctrl:'Visual',tol:'Operativo',crit:false},
+    ]},
+    { id:'4.5', name:'ELEMENTOS ELÉCTRICOS EMBALAJE', items:[
+      {id:'4.5.1',label:'Revisar estado botones avance de transporte de rodillos salida clasificación',ctrl:'Visual',tol:'Operativo',crit:false},
+    ]},
+    { id:'4.6', name:'ELEMENTOS OPERATIVOS EMBALAJE', items:[
+      {id:'4.6.1',label:'Revisar estado de componentes de impresora',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'4.6.2',label:'Revisar estado funcionamiento de impresora',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'4.6.3',label:'Revisar estado de componentes de etiquetadora',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'4.6.4',label:'Revisar funcionamiento de etiquetadora',ctrl:'Visual',tol:'Operativo',crit:false},
+      {id:'4.6.5',label:'Revisar estado de calibre pasa/no pasa de moldura en proceso',ctrl:'Visual',tol:'Operativo',crit:true},
+    ]},
+  ]},
+];
+
+// ========== FUNCIONES GLOBALES ==========
+window.showToast = function(msg, type='') { 
+  const t=document.getElementById('toast'); 
+  t.textContent=msg; 
+  t.className='toast'+(type?' '+type:''); 
+  t.classList.add('show'); 
+  setTimeout(()=>t.classList.remove('show'),2600); 
+};
+window.closeModal = function(id) { document.getElementById(id).classList.remove('show'); };
+
+// ========== CHECKLIST ==========
+async function loadChecklistConfig() {
+  try {
+    const [ovSnap, btnSnap] = await Promise.all([
+      getDocs(collection(db, 'checklist_item_overrides')),
+      getDoc(doc(db, 'checklist_config', 'btn_options'))
+    ]);
+    _itemOverrides = {};
+    ovSnap.docs.forEach(d => { _itemOverrides[d.id] = d.data(); });
+    _btnOptions = btnSnap.exists() ? btnSnap.data().options : null;
+  } catch(e) { console.warn(e); }
+}
+
+function getEffectiveItem(item) {
+  const ov = _itemOverrides[item.id];
+  if (!ov) return item;
+  return { ...item, label: ov.label ?? item.label, ctrl: ov.ctrl ?? item.ctrl, tol: ov.tol ?? item.tol, crit: ov.crit !== undefined ? ov.crit : item.crit, _modified: true };
+}
+
+function getEffectiveBtnOptions() { return _btnOptions && _btnOptions.length ? _btnOptions : DEFAULT_BTN_OPTIONS; }
+
+function buildItemEl(item, readonly=false) {
+  const eff = getEffectiveItem(item);
+  const btns = getEffectiveBtnOptions();
+  const div = document.createElement('div');
+  const ans = answers[item.id] || {};
+  const state = ans.state || '';
+  const aaValue = ans.aa || '';
+  const failKeys = btns.filter(b=>b.type==='fail').map(b=>b.key);
+  const showObs = failKeys.includes(state);
+  div.className = 'check-item' + (state ? ' state-'+state : '') + (readonly ? ' readonly-item' : '');
+  div.id = 'item_' + item.id;
+  const btnHtml = btns.map(b => `<button class="chk-btn chk-${b.type}${state===b.key?' selected':''}" onclick="window.setAnswer('${item.id}','${b.key}','${b.type}')">${b.label}</button>`).join('');
+  div.innerHTML = `<div class="item-top"><div class="item-num">${eff.id}</div><div class="item-label">${eff.label}</div>${eff.crit ? '<div class="crit-badge">CRIT</div>' : ''}</div><div class="item-meta"><span class="meta-tag">📐 ${eff.ctrl}</span><span class="meta-tag">✓ ${eff.tol}</span></div><div class="check-btns">${btnHtml}</div><div class="aa-selector"><label>📢 AA</label><select onchange="window.setAA('${item.id}', this.value)" ${readonly ? 'disabled' : ''}><option value="" ${aaValue === '' ? 'selected' : ''}>—</option><option value="AA" ${aaValue === 'AA' ? 'selected' : ''}>AA</option><option value="AA+MTTO" ${aaValue === 'AA+MTTO' ? 'selected' : ''}>AA+MTTO</option></select></div><div class="obs-area${showObs?' show':''}" id="obs_${item.id}"><textarea class="obs-input" id="obstxt_${item.id}" placeholder="Describe la falla..." oninput="window.saveObs('${item.id}',this.value)" ${readonly ? 'disabled' : ''}>${ans.obs||''}</textarea></div>`;
+  return div;
+}
+
+window.setAnswer = function(id, state, btnType) {
+  if (!answers[id]) answers[id] = {};
+  answers[id].state = state;
+  const el = document.getElementById('item_' + id);
+  const cssType = btnType || (state==='ok'?'ok':state==='fail'?'fail':'na');
+  el.className = 'check-item state-' + (cssType==='fail'||cssType==='custom'?'fail':cssType==='ok'?'ok':'na');
+  el.querySelectorAll('.chk-btn').forEach(b => b.classList.remove('selected'));
+  const selBtn = el.querySelector(`[onclick*="'${state}'"]`);
+  if (selBtn) selBtn.classList.add('selected');
+  const oa = document.getElementById('obs_'+id);
+  const failKeys = getEffectiveBtnOptions().filter(b=>b.type==='fail').map(b=>b.key);
+  failKeys.includes(state) ? oa.classList.add('show') : oa.classList.remove('show');
+  updateStats();
+};
+
+window.setAA = function(id, value) { if (!answers[id]) answers[id] = {}; answers[id].aa = value; };
+window.saveObs = function(id, val) { if (!answers[id]) answers[id] = {}; answers[id].obs = val; };
+
+function buildZoneProgressBars() {
+  const wrap = document.getElementById('zoneProgressBars');
+  if (!wrap) return;
+  wrap.innerHTML = ZONAS.map(zona => `<div style="margin-bottom:8px"><div class="zone-progress-label"><span>${zona.emoji} <strong>${zona.name}</strong></span><span><span id="zpct_${zona.id}">0%</span> <span id="zdone_${zona.id}" style="color:var(--muted)">0/0</span></span></div><div class="zone-progress-wrap"><div class="zone-progress-fill ${zona.id}" id="zfill_${zona.id}" style="width:0%"></div></div></div>`).join('');
+}
+
+function renderChecklist(savedAnswers=null, readonly=false) {
+  if(savedAnswers) answers = JSON.parse(JSON.stringify(savedAnswers));
+  const body = document.getElementById('checklistBody');
+  body.innerHTML = '';
+  ZONAS.forEach(zona => {
+    const zoneDiv = document.createElement('div');
+    zoneDiv.innerHTML = `<div class="zone-header ${zona.color}"><div class="zone-dot ${zona.color}"></div><div class="zone-name">${zona.emoji} ${zona.name}</div><div class="zone-badge" id="zb_${zona.id}">0/0</div></div>`;
+    body.appendChild(zoneDiv);
+    zona.subcats.forEach(sc => {
+      const scDiv = document.createElement('div');
+      scDiv.innerHTML = `<div class="subcat-header"><div class="subcat-name">${sc.id} — ${sc.name}</div><div class="subcat-pct" id="scp_${sc.id}">0/0</div></div>`;
+      body.appendChild(scDiv);
+      sc.items.forEach(item => body.appendChild(buildItemEl(item, readonly)));
+    });
+  });
+  buildZoneProgressBars();
+  updateStats();
+}
+
+function updateStats() {
+  let ok=0,fail=0,na=0,total=0,critFail=0;
+  ZONAS.forEach(zona => {
+    let zOk=0,zTot=0;
+    zona.subcats.forEach(sc => {
+      let scOk=0;
+      sc.items.forEach(item => {
+        total++; zTot++;
+        const s = answers[item.id]?.state;
+        const btnType = getEffectiveBtnOptions().find(b=>b.key===s)?.type||s;
+        if(btnType==='ok') { ok++; zOk++; scOk++; }
+        else if(btnType==='fail'||btnType==='custom') { fail++; if(item.crit) critFail++; }
+        else if(s==='na') { na++; }
+      });
+      const sp = document.getElementById('scp_'+sc.id);
+      if(sp) sp.textContent = `${scOk}/${sc.items.length}`;
+    });
+    const zb = document.getElementById('zb_'+zona.id);
+    if(zb) zb.textContent = `${zOk}/${zTot}`;
+    const zpct = zTot > 0 ? Math.round(zOk/zTot*100) : 0;
+    const fill = document.getElementById('zfill_'+zona.id);
+    const pctEl = document.getElementById('zpct_'+zona.id);
+    const doneEl = document.getElementById('zdone_'+zona.id);
+    if(fill) fill.style.width = zpct+'%';
+    if(pctEl) pctEl.textContent = zpct+'%';
+    if(doneEl) doneEl.textContent = `${zOk}/${zTot}`;
+  });
+  // EO% = OK / total items (not just answered)
+  const eoPct = total > 0 ? Math.round(ok / total * 100) : 0;
+  const color = eoPct >= 90 ? '#22C55E' : eoPct >= 70 ? '#F59E0B' : '#EF4444';
+  const pctEl = document.getElementById('statPct');
+  const smallEl = document.getElementById('statPctSmall');
+  const okEl = document.getElementById('statOk');
+  const totalEl = document.getElementById('statTotal');
+  const circle = document.getElementById('statCircle');
+  if(pctEl) { pctEl.textContent = eoPct+'%'; pctEl.style.color = color; }
+  if(smallEl) smallEl.textContent = eoPct+'%';
+  if(okEl) okEl.textContent = ok;
+  if(totalEl) totalEl.textContent = total;
+  if(circle) circle.setAttribute('stroke-dasharray', eoPct+' '+(100-eoPct));
+  if(circle) circle.setAttribute('stroke', color);
+  document.getElementById('progressFill').style.width = eoPct+'%';
+}
+
+window.clearChecklist = function() { if(confirm('¿Limpiar todas las respuestas?')) { answers = {}; renderChecklist(); showToast('Checklist limpiado'); } };
+
+window.submitChecklist = async function() {
+  if (!currentAssignment) { showToast('Sin asignación activa', 'error'); return; }
+  let ok=0,fail=0,na=0,total=0,critFail=0,pending=0;
+  const failItems = [];
+  ZONAS.forEach(z => z.subcats.forEach(sc => sc.items.forEach(item => {
+    total++;
+    const s = answers[item.id]?.state;
+    if(!s) { pending++; return; }
+    const btnType = getEffectiveBtnOptions().find(b=>b.key===s)?.type||s;
+    if(btnType==='ok') ok++;
+    else if(btnType==='fail'||btnType==='custom') { fail++; if(item.crit) critFail++; failItems.push(item.id); }
+    else na++;
+  })));
+  if(pending > 0) {
+    const ZONA_NAMES = {z0:'Moldurera',z1:'Zona 1',z2:'Zona 2',z3:'Zona 3 Embalaje'};
+    const lines = [];
+    ZONAS.forEach(z => {
+      let p=0; z.subcats.forEach(sc=>sc.items.forEach(i=>{ if(!answers[i.id]?.state) p++; }));
+      if(p>0) lines.push(`  ${z.emoji} ${ZONA_NAMES[z.id]}: ${p} pendiente${p!==1?'s':''}`);
+    });
+    if(!confirm(`⚠️ ${pending} ítems sin responder:
+
+${lines.join('\n')}
+
+¿Enviar de todas formas?`)) return;
+  }
+  const pct = total > 0 ? Math.round(ok/total*100) : 0; // EO% = OK/total
+  const record = {
+    id: 'CL-' + Date.now().toString(36).toUpperCase(),
+    assignmentId: currentAssignment.id,
+    equipo: currentAssignment.equipo || '',
+    turno: currentAssignment.turno || '',
+    fecha: currentAssignment.fecha || new Date().toISOString().split('T')[0],
+    userId: currentUser.uid,
+    userName: currentName,
+    answers: JSON.stringify(answers),
+    stats_ok: ok, stats_fail: fail, stats_na: na,
+    stats_pending: pending, stats_critFail: critFail, stats_total: total,
+    pct,
+    submittedAt: serverTimestamp(),
+    ts: Date.now()
+  };
+  try {
+    const saved = await addDoc(collection(db, 'checklist_records'), record);
+    if(!saved || !saved.id) throw new Error('No se recibió confirmación de guardado');
+    if(!currentAssignment._freeMode) {
+      await updateDoc(doc(db,'assignments',currentAssignment.id), { submitted: true }).catch(()=>{});
+    }
+    showToast('✓ Checklist enviado', 'success');
+    answers = {};
+    document.getElementById('clBottomBar').style.display = 'none';
+    renderChecklist(typeof record.answers === 'string' ? JSON.parse(record.answers) : (record.answers||{}), true);
+    // Show submitted banner
+    const bannerWrap = document.getElementById('assignBannerWrap');
+    if(bannerWrap) {
+      const existing = bannerWrap.querySelector('.assign-banner');
+      if(existing) existing.innerHTML += '<div style="color:#1a7a3c;font-weight:700;font-size:12px;margin-top:4px">✓ CHECK LIST ENVIADO — EO: ' + pct + '%</div>';
+    }
+    await loadAllCheckRecords();
+    renderCalendar();
+    await loadHistorial();
+  } catch(e) {
+    console.error('submitChecklist error:', e);
+    showToast('Error al guardar: ' + (e.message || String(e)), 'error');
+  }
+};
+
+// ========== CALENDARIO ==========
+function _normalizeRecord(d) {
+  const r = { docId: d.id, ...d.data() };
+  // Parse answers if stored as JSON string
+  if (typeof r.answers === 'string') { try { r.answers = JSON.parse(r.answers); } catch(e) { r.answers = {}; } }
+  // Rebuild stats object from flat fields (new format) or keep existing (old format)
+  if (!r.stats && r.stats_total !== undefined) {
+    r.stats = { ok: r.stats_ok||0, fail: r.stats_fail||0, na: r.stats_na||0,
+      pending: r.stats_pending||0, critFail: r.stats_critFail||0, total: r.stats_total||0 };
+  }
+  return r;
+}
+async function loadAllCheckRecords() {
+  const snap = await getDocs(query(collection(db,'checklist_records'), orderBy('ts','desc')));
+  allCheckRecords = snap.docs.map(_normalizeRecord);
+}
+function getUserRecords(userId) { return allCheckRecords.filter(r => r.userId === userId); }
+function getStreakForUser(userId) {
+  const records = getUserRecords(userId);
+  if(records.length === 0) return 0;
+  const dates = [...new Set(records.map(r => r.fecha))].sort();
+  let streak = 0, today = new Date().toISOString().split('T')[0], checkDate = today;
+  while(dates.includes(checkDate)) { streak++; let prev = new Date(checkDate); prev.setDate(prev.getDate() - 1); checkDate = prev.toISOString().split('T')[0]; }
+  return streak;
+}
+function getDayStatus(userId, dateStr) {
+  const record = allCheckRecords.find(r => r.userId === userId && r.fecha === dateStr);
+  if(record) return { status: 'ok', pct: record.pct };
+  const assignment = _allAssignments.find(a => a.userId === userId && a.fecha === dateStr);
+  if(assignment) return { status: 'pending' };
+  return { status: 'none' };
+}
+function renderCalendar() {
+  const year = currentCalendarDate.getFullYear(), month = currentCalendarDate.getMonth();
+  const firstDay = new Date(year, month, 1), lastDay = new Date(year, month + 1, 0);
+  const startWeekday = firstDay.getDay(), todayStr = new Date().toISOString().split('T')[0];
+  const monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  document.getElementById('calendarMonth').textContent = `${monthNames[month]} ${year}`;
+  const weekdays = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  let html = weekdays.map(d => `<div class="calendar-weekday">${d}</div>`).join('');
+  let day = 1;
+  for(let i = 0; i < 42; i++) {
+    if(i < startWeekday || day > lastDay.getDate()) html += `<div class="calendar-day" style="opacity:0.3"></div>`;
+    else {
+      const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+      const status = getDayStatus(currentUser.uid, dateStr);
+      const isToday = dateStr === todayStr;
+      const dayCls = status.status==='ok' ? 'day-ok' : status.status==='pending' ? 'day-pending' : '';
+      let statusHtml = status.status === 'ok' ? `<div class="calendar-day-status"><span class="status-ok">✓ ${status.pct}%</span></div>` : (status.status === 'pending' ? `<div class="calendar-day-status"><span class="status-pending">⏳</span></div>` : `<div class="calendar-day-status"><span style="color:#9ca3af">—</span></div>`);
+      html += `<div class="calendar-day ${isToday ? 'today' : ''} ${dayCls}"><div class="calendar-day-num">${day}</div>${statusHtml}</div>`;
+      day++;
+    }
+  }
+  document.getElementById('calendarGrid').innerHTML = html;
+  const streak = getStreakForUser(currentUser.uid);
+  document.getElementById('currentStreak').textContent = streak;
+  const msg = document.getElementById('streakMsg');
+  if(streak >= 5) msg.innerHTML = '🔥 ¡Excelente! Sigue así';
+  else if(streak >= 2) msg.innerHTML = '👍 Buena racha';
+  else msg.innerHTML = streak === 1 ? '✅ ¡Primer día completado!' : '📋 Completa tu checklist hoy';
+}
+window.changeMonth = function(delta) { currentCalendarDate.setMonth(currentCalendarDate.getMonth() + delta); renderCalendar(); };
+window.goToday = function() { currentCalendarDate = new Date(); renderCalendar(); };
+
+// ========== KEY USER ==========
+async function loadKeyUserAssignments() {
+  const snap = await getDocs(collection(db,'user_keyuser_assignments'));
+  const assignments = {};
+  snap.docs.forEach(d => { assignments[d.id] = d.data().keyUserId; });
+  return assignments;
+}
+window.assignKeyUser = async function() {
+  const operarioId = document.getElementById('assignKeyUserSelect').value;
+  const keyUserId = document.getElementById('assignKeyUserTarget').value;
+  if(!operarioId || !keyUserId) { showToast('Selecciona ambos campos'); return; }
+  await setDoc(doc(db,'user_keyuser_assignments', operarioId), { keyUserId, assignedAt: serverTimestamp() });
+  showToast('Key user asignado');
+  await loadAllUsers();
+  renderKeyUserAssignmentsList();
+  renderOperariosStreak();
+};
+async function renderKeyUserAssignmentsList() {
+  const assignments = await loadKeyUserAssignments();
+  const container = document.getElementById('keyUserAssignmentsList');
+  if(!container) return;
+  const items = [];
+  for(const [userId, keyUserId] of Object.entries(assignments)) {
+    const operario = allUsers[userId];
+    const keyUser = allUsers[keyUserId];
+    if(operario && keyUser) items.push(`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span>👤 ${operario.name || operario.username}</span><span style="color:var(--warn)">→ ${keyUser.name || keyUser.username}</span></div>`);
+  }
+  container.innerHTML = items.length ? items.join('') : '<div style="padding:12px;color:var(--muted)">Sin asignaciones</div>';
+}
+function renderOperariosStreak() {
+  const filterKeyUser = document.getElementById('filterByKeyUser').value;
+  const container = document.getElementById('operariosStreakList');
+  if(!container) return;
+  const operarios = Object.values(allUsers).filter(u => u.role === 'user');
+  const filtered = filterKeyUser ? operarios.filter(o => o.keyUserId === filterKeyUser) : operarios;
+  container.innerHTML = filtered.map(op => `<div class="operario-row"><div class="operario-info"><div class="operario-name">${op.name || op.username}</div><div class="operario-keyuser">${op.keyUserName ? `Key: ${op.keyUserName}` : 'Sin Key User'}</div><div class="mini-calendar">${'<div class="mini-day ok">✓</div>'.repeat(3)}${'<div class="mini-day none">•</div>'.repeat(4)}</div></div><div class="operario-streak">${getStreakForUser(op.uid)}</div></div>`).join('');
+}
+
+// ========== USER MANAGEMENT ==========
+async function loadAllUsers() {
+  const snap = await getDocs(collection(db,'users'));
+  allUsers = {};
+  const keyAssignments = await loadKeyUserAssignments();
+  for(const doc of snap.docs) {
+    const data = doc.data();
+    const keyAssignment = keyAssignments[doc.id];
+    if(keyAssignment) data.keyUserId = keyAssignment;
+    allUsers[doc.id] = { uid:doc.id, ...data };
+  }
+  for(const uid in allUsers) {
+    if(allUsers[uid].keyUserId && allUsers[allUsers[uid].keyUserId]) {
+      allUsers[uid].keyUserName = allUsers[allUsers[uid].keyUserId].name || allUsers[allUsers[uid].keyUserId].username;
+    }
+  }
+  const operarios = Object.values(allUsers).filter(u => u.role === 'user');
+  const keyUsers = Object.values(allUsers).filter(u => u.role === 'keyuser' || u.role === 'admin');
+  const asgSelect = document.getElementById('asgUsuario');
+  if(asgSelect) asgSelect.innerHTML = '<option value="">Seleccionar...</option>' + operarios.map(u => `<option value="${u.uid}">${u.name || u.username}</option>`).join('');
+  const assignSelect = document.getElementById('assignKeyUserSelect');
+  if(assignSelect) assignSelect.innerHTML = '<option value="">Seleccionar operario...</option>' + operarios.map(u => `<option value="${u.uid}">${u.name || u.username}</option>`).join('');
+  const targetSelect = document.getElementById('assignKeyUserTarget');
+  if(targetSelect) targetSelect.innerHTML = '<option value="">Seleccionar key user...</option>' + keyUsers.map(u => `<option value="${u.uid}">${u.name || u.username}</option>`).join('');
+  const newUserKeyUser = document.getElementById('newUserKeyUser');
+  if(newUserKeyUser) newUserKeyUser.innerHTML = '<option value="">Ninguno</option>' + keyUsers.filter(u => u.role === 'keyuser').map(u => `<option value="${u.uid}">${u.name || u.username}</option>`).join('');
+  const auditSelect = document.getElementById('auditOperario');
+  if(auditSelect) auditSelect.innerHTML = '<option value="">Seleccionar operario...</option>' + operarios.map(u => `<option value="${u.uid}">${u.name || u.username}</option>`).join('');
+  renderUsersList();
+}
+function renderUsersList() {
+  const el = document.getElementById('usersList');
+  if(!el) return;
+  const list = Object.values(allUsers);
+  if(!list.length) { el.innerHTML='<div class="empty-state">Sin usuarios</div>'; return; }
+  el.innerHTML = list.map(u => `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid var(--border)"><div><strong>${u.name || u.username}</strong><div style="font-size:11px;color:var(--muted)">${u.role==='admin'?'ADMIN':u.role==='keyuser'?'KEY USER':'OPERARIO'}${u.keyUserName ? ` · Key: ${u.keyUserName}` : ''}</div></div><div><button class="btn-action-edit" onclick="openEditUser('${u.uid}')">✏️</button><button class="btn-action-del" onclick="deleteUser('${u.uid}')">🗑</button></div></div>`).join('');
+}
+window.openAddUser = function() {
+  editingUserId = null;
+  document.getElementById('modalUserTitle').textContent = 'Nuevo Usuario';
+  document.getElementById('newUserName').value = '';
+  document.getElementById('newUserUsername').value = '';
+  document.getElementById('newUserPass').value = '';
+  document.getElementById('newUserRole').value = 'user';
+  document.getElementById('addUserErr').style.display = 'none';
+  document.getElementById('modalUser').classList.add('show');
+};
+window.openEditUser = function(uid) {
+  editingUserId = uid;
+  const u = allUsers[uid];
+  if(u) {
+    document.getElementById('modalUserTitle').textContent = 'Editar Usuario';
+    document.getElementById('newUserName').value = u.name || '';
+    document.getElementById('newUserUsername').value = u.username || '';
+    document.getElementById('newUserPass').value = '';
+    document.getElementById('newUserRole').value = u.role || 'user';
+    document.getElementById('addUserErr').style.display = 'none';
+    document.getElementById('modalUser').classList.add('show');
+  }
+};
+window.saveUser = async function() {
+  const name = document.getElementById('newUserName').value.trim();
+  const username = document.getElementById('newUserUsername').value.trim().toLowerCase();
+  const pass = document.getElementById('newUserPass').value;
+  const role = document.getElementById('newUserRole').value;
+  const keyUserId = document.getElementById('newUserKeyUser').value;
+  const errEl = document.getElementById('addUserErr');
+  if(!name || !username) { errEl.textContent='Nombre y usuario son requeridos'; errEl.style.display='block'; return; }
+  if(editingUserId) {
+    await updateDoc(doc(db,'users',editingUserId), { name, username, role });
+    if(keyUserId && role === 'user') await setDoc(doc(db,'user_keyuser_assignments', editingUserId), { keyUserId });
+    else if(role !== 'user') await deleteDoc(doc(db,'user_keyuser_assignments', editingUserId)).catch(()=>{});
+    showToast('Usuario actualizado');
+  } else {
+    if(!pass || pass.length < 6) { errEl.textContent='Contraseña mínimo 6 caracteres'; errEl.style.display='block'; return; }
+    const email = username + '@tmt1.cl';
+    try {
+      const cred = await _getSecondaryAuth_createUser(email, pass);
+      await setDoc(doc(db,'users',cred.user.uid), { name, username, email, role, createdAt: serverTimestamp() });
+      if(keyUserId && role === 'user') await setDoc(doc(db,'user_keyuser_assignments', cred.user.uid), { keyUserId });
+      
+      showToast('Usuario creado');
+    } catch(e) {
+      errEl.textContent = e.code === 'auth/email-already-in-use' ? 'Ese usuario ya existe' : e.message;
+      errEl.style.display = 'block';
+      return;
+    }
+  }
+  closeModal('modalUser');
+  await loadAllUsers();
+  renderOperariosStreak();
+  renderKeyUserAssignmentsList();
+};
+window.deleteUser = async function(uid) {
+  if(!confirm('¿Eliminar este usuario?')) return;
+  await deleteDoc(doc(db,'users',uid));
+  await deleteDoc(doc(db,'user_keyuser_assignments',uid)).catch(()=>{});
+  await loadAllUsers();
+  renderOperariosStreak();
+  renderKeyUserAssignmentsList();
+  showToast('Usuario eliminado');
+};
+
+// ========== ASSIGNMENTS ==========
+async function loadAssignments() {
+  const snap = await getDocs(query(collection(db,'assignments'), orderBy('fecha','desc')));
+  _allAssignments = snap.docs.map(d=>({id:d.id,...d.data()}));
+  const el = document.getElementById('assignmentsList');
+  if(el) {
+    if(!_allAssignments.length) el.innerHTML='<div class="empty-state">Sin asignaciones</div>';
+    else el.innerHTML = _allAssignments.slice(0,10).map(a => `<div style="background:var(--surface2);border-radius:10px;padding:10px;margin-bottom:8px"><div><strong>${a.equipo}</strong> - Turno ${a.turno} - ${a.fecha}</div><div style="font-size:12px;color:var(--muted)">👤 ${allUsers[a.userId]?.name || a.userId}</div><div style="display:flex;gap:6px;margin-top:8px"><button class="btn-action-edit" onclick="editAssignment('${a.id}')">✏️</button><button class="btn-action-del" onclick="deleteAssignment('${a.id}')">🗑</button></div></div>`).join('');
+  }
+}
+window.saveAssignment = async function() {
+  const equipo = document.getElementById('asgEquipo').value;
+  const turno = document.getElementById('asgTurno').value;
+  const fecha = document.getElementById('asgFecha').value;
+  const userId = document.getElementById('asgUsuario').value;
+  if(!equipo || !turno || !fecha || !userId) { showToast('Completa todos los campos'); return; }
+  await addDoc(collection(db,'assignments'), { equipo, turno, fecha, userId, userName: allUsers[userId]?.name || '', zonas: ['z0','z1','z2','z3'], createdAt: serverTimestamp() });
+  showToast('Asignación guardada');
+  await loadAssignments();
+};
+window.deleteAssignment = async function(id) { await deleteDoc(doc(db,'assignments',id)); await loadAssignments(); showToast('Asignación eliminada'); };
+window.editAssignment = function(id) { showToast('Edición disponible pronto'); };
+window.loadAuditChecklist = async function() { showToast('Función de auditoría'); };
+
+// ========== OPERARIO CHECKLIST ==========
+async function loadOperarioChecklist() {
+  const today = new Date().toISOString().split('T')[0];
+  const q = query(collection(db,'assignments'), where('userId','==',currentUser.uid), where('fecha','==',today));
+  const snap = await getDocs(q);
+  const statsBar = document.getElementById('statsBar');
+  const progressWrap = document.getElementById('progressWrap');
+  const bottomBar = document.getElementById('clBottomBar');
+  const noMsg = document.getElementById('noAssignMsg');
+  const bannerWrap = document.getElementById('assignBannerWrap');
+
+  if(snap.empty) {
+    // Admin and keyuser can use checklist freely without a formal assignment
+    if(currentRole === 'admin' || currentRole === 'keyuser') {
+      currentAssignment = {
+        id: 'free-' + currentUser.uid + '-' + today,
+        equipo: currentRole === 'admin' ? 'Admin' : 'Key User',
+        turno: '—',
+        fecha: today,
+        userId: currentUser.uid,
+        _freeMode: true
+      };
+      if(noMsg) noMsg.style.display = 'none';
+      if(statsBar) statsBar.style.display = 'grid';
+      if(progressWrap) progressWrap.style.display = 'block';
+      if(bottomBar) bottomBar.style.display = 'grid';
+      const ZONA_NAMES = {z0:'Moldurera',z1:'Zona 1',z2:'Zona 2',z3:'Zona 3 Embalaje'};
+      const zonasLabel = ZONAS.map(z=>`${z.emoji} ${ZONA_NAMES[z.id]}`).join(' · ');
+      if(bannerWrap) bannerWrap.innerHTML = `<div class="assign-banner"><b>🏭 ${currentRole === 'admin' ? '👑 Admin' : '🔑 Key User'} — ${currentName}</b><div style="font-size:11px;color:#6b7280;margin-top:4px">${today} · Modo libre · ${zonasLabel}</div></div>`;
+      renderChecklist(null, false);
+      return;
+    }
+    currentAssignment = null;
+    if(statsBar) statsBar.style.display = 'none';
+    if(progressWrap) progressWrap.style.display = 'none';
+    if(bottomBar) bottomBar.style.display = 'none';
+    if(noMsg) noMsg.style.display = 'block';
+    if(bannerWrap) bannerWrap.innerHTML = '<div class="assign-banner" style="background:#fef3c7;border-color:#fcd34d"><b>⚠️ Sin asignación para hoy.</b> Contacta a tu supervisor.</div>';
+    document.getElementById('checklistBody').innerHTML = '';
+    document.getElementById('zoneProgressBars').innerHTML = '';
+    return;
+  }
+
+  const asgDoc = snap.docs[0];
+  currentAssignment = { id: asgDoc.id, ...asgDoc.data() };
+
+  // Check if already submitted
+  const doneQ = query(collection(db,'checklist_records'), where('assignmentId','==',currentAssignment.id));
+  const doneSnap = await getDocs(doneQ);
+  const alreadyDone = !doneSnap.empty;
+
+  if(noMsg) noMsg.style.display = 'none';
+  if(statsBar) statsBar.style.display = 'grid';
+  if(progressWrap) progressWrap.style.display = 'block';
+  if(bottomBar) bottomBar.style.display = alreadyDone ? 'none' : 'grid';
+
+  const ZONA_NAMES = {z0:'Moldurera',z1:'Zona 1',z2:'Zona 2',z3:'Zona 3 Embalaje'};
+  const zonasLabel = ZONAS.map(z=>`${z.emoji} ${ZONA_NAMES[z.id]}`).join(' · ');
+  if(bannerWrap) bannerWrap.innerHTML = `<div class="assign-banner"><b>🏭 ${currentAssignment.equipo} — Turno ${currentAssignment.turno}</b><div style="font-size:11px;color:#6b7280;margin-top:4px">${currentAssignment.fecha} · ${zonasLabel}</div>${alreadyDone ? '<div style="color:#1a7a3c;font-weight:700;font-size:12px;margin-top:4px">✓ CHECK LIST ENVIADO</div>' : ''}</div>`;
+
+  const doneData = alreadyDone ? _normalizeRecord(doneSnap.docs[0]).answers : null;
+  renderChecklist(doneData, alreadyDone);
+}
+
+// ========== AUDIT CHECKLIST ==========
+window.loadAuditChecklist = async function() {
+  const userId = document.getElementById('auditOperario').value;
+  const fecha = document.getElementById('auditFecha').value;
+  if(!userId || !fecha) return;
+  isAuditMode = true; auditTargetUserId = userId; auditTargetFecha = fecha;
+  const q = query(collection(db,'checklist_records'), where('userId','==',userId), where('fecha','==',fecha));
+  const snap = await getDocs(q);
+  const statsBar = document.getElementById('statsBar');
+  const progressWrap = document.getElementById('progressWrap');
+  const bottomBar = document.getElementById('clBottomBar');
+  if(statsBar) statsBar.style.display = 'grid';
+  if(progressWrap) progressWrap.style.display = 'block';
+  if(bottomBar) bottomBar.style.display = 'none';
+  if(snap.empty) {
+    showToast('Sin registros para ese operario/fecha', 'error');
+    document.getElementById('checklistBody').innerHTML = '';
+    document.getElementById('zoneProgressBars').innerHTML = '';
+    return;
+  }
+  const rec = _normalizeRecord(snap.docs[0]);
+  const userName = allUsers[userId]?.name || userId;
+  const bannerWrap = document.getElementById('assignBannerWrap');
+  if(bannerWrap) bannerWrap.innerHTML = `<div class="audit-panel"><b>🔍 Auditoría: ${userName}</b> · ${fecha} <span class="badge-audit">READ ONLY</span></div>`;
+  renderChecklist(rec.answers, true);
+};
+
+// ========== EDITOR CHECKLIST ==========
+// ── Editor state ──
+let _editingZonaId = null;
+let _editingSubcatId = null;
+let _isNewItem = false;
+
+// ── Tab switcher ──
+window.switchEditorTab = function(tab) {
+  document.querySelectorAll('.editor-tab').forEach(b => {
+    b.style.color = 'var(--muted)'; b.style.borderBottomColor = 'transparent';
+  });
+  document.getElementById('etab-'+tab).style.color = 'var(--accent)';
+  document.getElementById('etab-'+tab).style.borderBottomColor = 'var(--accent)';
+  document.getElementById('epanel-zonas').style.display = tab==='zonas' ? 'block' : 'none';
+  document.getElementById('epanel-btns').style.display  = tab==='btns'  ? 'block' : 'none';
+};
+
+// ── Populate zona selector ──
+function refreshZonaSelector() {
+  const sel = document.getElementById('editorZonaSelect');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">Seleccionar zona...</option>' +
+    ZONAS.map(z => `<option value="${z.id}" ${z.id===cur?'selected':''}>${z.emoji} ${z.name}</option>`).join('');
+}
+
+// ── Load zone editor ──
+window.loadEditorZona = function() {
+  const zonaId = document.getElementById('editorZonaSelect').value;
+  const container = document.getElementById('editorItemsList');
+  const zonaAct = document.getElementById('zonaActions');
+  const addBar  = document.getElementById('addSubcatBar');
+  _editingZonaId = zonaId;
+  if (!zonaId) {
+    container.innerHTML = '';
+    if(zonaAct) zonaAct.style.display='none';
+    if(addBar)  addBar.style.display='none';
+    return;
+  }
+  if(zonaAct) zonaAct.style.display='block';
+  if(addBar)  addBar.style.display='block';
+  const zona = ZONAS.find(z => z.id === zonaId);
+  if (!zona) return;
+  let html = '';
+  zona.subcats.forEach(sc => {
+    html += `<div style="display:flex;align-items:center;gap:6px;padding:8px 4px 4px">
+      <span style="font-family:var(--font);font-size:10px;font-weight:800;color:var(--accent);letter-spacing:2px;flex:1">${sc.id} — ${sc.name}</span>
+      <button class="btn-action-edit" onclick="openRenameSubcat('${sc.id}')" style="padding:3px 7px;font-size:11px">✏️</button>
+      <button class="btn-action-del" onclick="deleteSubcat('${sc.id}')" style="padding:3px 7px;font-size:11px">🗑</button>
+      <button class="btn btn-admin btn-sm" onclick="openNewItem('${sc.id}')" style="width:auto;padding:4px 10px;font-size:10px">＋ Ítem</button>
+    </div>`;
+    sc.items.forEach(item => {
+      const eff = getEffectiveItem(item);
+      const isCustom = !!_itemOverrides[item.id];
+      html += `<div class="editor-item">
+        <div class="editor-item-body">
+          <div class="editor-item-id">${eff.id}</div>
+          <div class="editor-item-label">${eff.label}</div>
+          <div class="editor-item-meta">
+            <span class="editor-item-tag">📐 ${eff.ctrl}</span>
+            <span class="editor-item-tag">✓ ${eff.tol}</span>
+            ${eff.crit ? '<span class="editor-item-tag crit">CRÍTICO</span>' : ''}
+            ${isCustom ? '<span class="editor-item-tag modified">editado</span>' : ''}
+          </div>
+        </div>
+        <button class="btn-edit-item" onclick="openEditItem('${item.id}')">✏️</button>
+      </div>`;
+    });
+  });
+  container.innerHTML = html || '<div class="empty-state" style="padding:20px">Sin subcategorías. Agrega una.</div>';
+};
+
+// ── ZONA CRUD ──
+window.openNewZona = function() {
+  document.getElementById('modalZonaTitle').textContent = 'Nueva Zona';
+  document.getElementById('zonaId').value = '';
+  document.getElementById('zonaId').disabled = false;
+  document.getElementById('zonaNombre').value = '';
+  document.getElementById('zonaEmoji').value = '';
+  document.getElementById('zonaErr').style.display = 'none';
+  document.getElementById('modalZona').classList.add('show');
+};
+window.openRenameZona = function() {
+  const zona = ZONAS.find(z => z.id === _editingZonaId);
+  if(!zona) return;
+  document.getElementById('modalZonaTitle').textContent = 'Renombrar Zona';
+  document.getElementById('zonaId').value = zona.id;
+  document.getElementById('zonaId').disabled = true;
+  document.getElementById('zonaNombre').value = zona.name;
+  document.getElementById('zonaEmoji').value = zona.emoji;
+  document.getElementById('zonaErr').style.display = 'none';
+  document.getElementById('modalZona').classList.add('show');
+};
+window.saveZona = async function() {
+  const id    = document.getElementById('zonaId').value.trim().toLowerCase().replace(/\s+/g,'');
+  const name  = document.getElementById('zonaNombre').value.trim().toUpperCase();
+  const emoji = document.getElementById('zonaEmoji').value.trim() || '⚙️';
+  const errEl = document.getElementById('zonaErr');
+  if(!id || !name) { errEl.textContent='ID y nombre son requeridos'; errEl.style.display='block'; return; }
+  const isNew = !document.getElementById('zonaId').disabled;
+  if(isNew && ZONAS.find(z=>z.id===id)) { errEl.textContent='Ya existe una zona con ese ID'; errEl.style.display='block'; return; }
+  if(isNew) {
+    const newZona = { id, name, emoji, color: id, subcats: [] };
+    ZONAS.push(newZona);
+    await setDoc(doc(db,'checklist_zonas',id), { id, name, emoji, order: ZONAS.length });
+    showToast('Zona creada ✓','success');
+  } else {
+    const zona = ZONAS.find(z=>z.id===id);
+    if(zona) { zona.name=name; zona.emoji=emoji; }
+    await setDoc(doc(db,'checklist_zonas',id), { id, name, emoji, order: ZONAS.findIndex(z=>z.id===id) });
+    showToast('Zona actualizada ✓','success');
+  }
+  closeModal('modalZona');
+  refreshZonaSelector();
+  loadEditorZona();
+  renderChecklist(answers);
+};
+window.deleteZona = async function() {
+  if(!_editingZonaId) return;
+  const zona = ZONAS.find(z=>z.id===_editingZonaId);
+  if(!confirm(`¿Eliminar la zona "${zona?.name}"? Se eliminarán todas sus subcategorías e ítems.`)) return;
+  const idx = ZONAS.findIndex(z=>z.id===_editingZonaId);
+  if(idx>=0) ZONAS.splice(idx,1);
+  await deleteDoc(doc(db,'checklist_zonas',_editingZonaId)).catch(()=>{});
+  _editingZonaId = null;
+  document.getElementById('editorZonaSelect').value='';
+  refreshZonaSelector();
+  loadEditorZona();
+  renderChecklist(answers);
+  showToast('Zona eliminada','success');
+};
+
+// ── SUBCATEGORY CRUD ──
+window.openNewSubcat = function() {
+  _editingSubcatId = null;
+  document.getElementById('modalSubcatTitle').textContent = 'Nueva Subcategoría';
+  document.getElementById('subcatNombre').value = '';
+  document.getElementById('subcatErr').style.display = 'none';
+  document.getElementById('modalSubcat').classList.add('show');
+};
+window.openRenameSubcat = function(scId) {
+  const zona = ZONAS.find(z=>z.id===_editingZonaId);
+  const sc = zona?.subcats.find(s=>s.id===scId);
+  if(!sc) return;
+  _editingSubcatId = scId;
+  document.getElementById('modalSubcatTitle').textContent = 'Renombrar Subcategoría';
+  document.getElementById('subcatNombre').value = sc.name;
+  document.getElementById('subcatErr').style.display = 'none';
+  document.getElementById('modalSubcat').classList.add('show');
+};
+window.saveSubcat = async function() {
+  const name = document.getElementById('subcatNombre').value.trim().toUpperCase();
+  const errEl = document.getElementById('subcatErr');
+  if(!name) { errEl.textContent='El nombre no puede estar vacío'; errEl.style.display='block'; return; }
+  const zona = ZONAS.find(z=>z.id===_editingZonaId);
+  if(!zona) return;
+  if(_editingSubcatId) {
+    const sc = zona.subcats.find(s=>s.id===_editingSubcatId);
+    if(sc) sc.name = name;
+    showToast('Subcategoría actualizada ✓','success');
+  } else {
+    const scNum = zona.subcats.length + 1;
+    const zonaNum = ZONAS.findIndex(z=>z.id===_editingZonaId) + 1;
+    const newId = `${zonaNum}.${scNum}`;
+    zona.subcats.push({ id: newId, name, items: [] });
+    await setDoc(doc(db,'checklist_subcats', _editingZonaId+'_'+newId.replace('.','_')),
+      { zonaId: _editingZonaId, id: newId, name, order: scNum });
+    showToast('Subcategoría creada ✓','success');
+  }
+  closeModal('modalSubcat');
+  loadEditorZona();
+};
+window.deleteSubcat = async function(scId) {
+  const zona = ZONAS.find(z=>z.id===_editingZonaId);
+  const sc = zona?.subcats.find(s=>s.id===scId);
+  if(!confirm(`¿Eliminar la subcategoría "${sc?.name}" y todos sus ítems?`)) return;
+  const idx = zona.subcats.findIndex(s=>s.id===scId);
+  if(idx>=0) zona.subcats.splice(idx,1);
+  await deleteDoc(doc(db,'checklist_subcats',_editingZonaId+'_'+scId.replace('.','_'))).catch(()=>{});
+  loadEditorZona();
+  renderChecklist(answers);
+  showToast('Subcategoría eliminada','success');
+};
+
+// ── ITEM CRUD ──
+window.openNewItem = function(scId) {
+  _editingItemId = null;
+  _editingSubcatId = scId;
+  _isNewItem = true;
+  document.getElementById('modalItemTitle').textContent = 'Nuevo Ítem';
+  document.getElementById('editItemLabel').value = '';
+  document.getElementById('editItemCtrl').value = 'Visual';
+  document.getElementById('editItemTol').value = 'Operativo';
+  document.getElementById('editItemCrit').value = 'false';
+  document.getElementById('editItemErr').style.display = 'none';
+  document.getElementById('deleteItemRow').style.display = 'none';
+  document.getElementById('modalEditItem').classList.add('show');
+};
+window.openEditItem = function(itemId) {
+  _editingItemId = itemId;
+  _isNewItem = false;
+  let baseItem = null;
+  for(const zona of ZONAS) for(const sc of zona.subcats) {
+    const found = sc.items.find(i=>i.id===itemId);
+    if(found) { baseItem=found; break; } if(baseItem) break;
+  }
+  if(!baseItem) return;
+  const eff = getEffectiveItem(baseItem);
+  document.getElementById('modalItemTitle').textContent = 'Editar Ítem';
+  document.getElementById('editItemLabel').value = eff.label;
+  document.getElementById('editItemCtrl').value = eff.ctrl;
+  document.getElementById('editItemTol').value = eff.tol;
+  document.getElementById('editItemCrit').value = String(eff.crit);
+  document.getElementById('editItemErr').style.display = 'none';
+  document.getElementById('deleteItemRow').style.display = 'block';
+  document.getElementById('modalEditItem').classList.add('show');
+};
+window.saveItemEdit = async function() {
+  const label = document.getElementById('editItemLabel').value.trim();
+  const ctrl  = document.getElementById('editItemCtrl').value.trim() || 'Visual';
+  const tol   = document.getElementById('editItemTol').value.trim()  || 'Operativo';
+  const crit  = document.getElementById('editItemCrit').value === 'true';
+  const errEl = document.getElementById('editItemErr');
+  if(!label) { errEl.textContent='La descripción no puede estar vacía'; errEl.style.display='block'; return; }
+
+  if(_isNewItem) {
+    // Find subcat and generate ID
+    let targetSc=null, targetZona=null;
+    for(const zona of ZONAS) {
+      const sc = zona.subcats.find(s=>s.id===_editingSubcatId);
+      if(sc) { targetSc=sc; targetZona=zona; break; }
+    }
+    if(!targetSc) return;
+    const newId = `${_editingSubcatId}.${targetSc.items.length+1}`;
+    const newItem = { id: newId, label, ctrl, tol, crit };
+    targetSc.items.push(newItem);
+    await setDoc(doc(db,'checklist_item_overrides',newId), { label, ctrl, tol, crit, _custom: true });
+    showToast('Ítem creado ✓','success');
+  } else {
+    await setDoc(doc(db,'checklist_item_overrides',_editingItemId), { label, ctrl, tol, crit });
+    _itemOverrides[_editingItemId] = { label, ctrl, tol, crit };
+    // Also update in ZONAS array
+    for(const zona of ZONAS) for(const sc of zona.subcats) {
+      const item = sc.items.find(i=>i.id===_editingItemId);
+      if(item) { item.label=label; item.ctrl=ctrl; item.tol=tol; item.crit=crit; }
+    }
+    showToast('Ítem actualizado ✓','success');
+  }
+  closeModal('modalEditItem');
+  loadEditorZona();
+  renderChecklist(answers);
+};
+window.deleteItem = async function() {
+  if(!_editingItemId) return;
+  let targetSc=null;
+  for(const zona of ZONAS) {
+    for(const sc of zona.subcats) {
+      const idx = sc.items.findIndex(i=>i.id===_editingItemId);
+      if(idx>=0) { targetSc=sc; sc.items.splice(idx,1); break; }
+    }
+    if(targetSc) break;
+  }
+  await deleteDoc(doc(db,'checklist_item_overrides',_editingItemId)).catch(()=>{});
+  closeModal('modalEditItem');
+  loadEditorZona();
+  renderChecklist(answers);
+  showToast('Ítem eliminado','success');
+};
+
+// ========== EDITOR BOTONES ==========
+function renderBtnOptionsPreview(container) {
+  const opts = getEffectiveBtnOptions();
+  container.innerHTML = opts.map(o => `<div class="chk-btn preview-btn-${o.type||'custom'}" style="padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;">${o.label}</div>`).join('');
+}
+window.openEditBtnOptions = function() {
+  _tempBtnOptions = JSON.parse(JSON.stringify(getEffectiveBtnOptions()));
+  renderBtnOptionsList();
+  document.getElementById('modalEditBtns').classList.add('show');
+};
+function renderBtnOptionsList() {
+  document.getElementById('btnOptionsList').innerHTML = _tempBtnOptions.map((o, i) => `<div class="btn-opt-row"><span class="btn-opt-key">${o.key}</span><input class="btn-opt-label-input" value="${o.label}" oninput="updateBtnOption(${i},'label',this.value)"><select class="btn-opt-type" onchange="updateBtnOption(${i},'type',this.value)"><option value="ok" ${o.type==='ok'?'selected':''}>OK (verde)</option><option value="fail" ${o.type==='fail'?'selected':''}>Falla (rojo)</option><option value="na" ${o.type==='na'?'selected':''}>N/A (gris)</option><option value="custom" ${o.type==='custom'?'selected':''}>Custom (morado)</option></select>${_tempBtnOptions.length > 2 ? `<button class="btn-opt-del" onclick="removeBtnOption(${i})">✕</button>` : '<span style="width:22px"></span>'}</div>`).join('');
+  const prev = document.getElementById('btnOptionsModalPreview');
+  prev.innerHTML = _tempBtnOptions.map(o => `<div class="chk-btn preview-btn-${o.type||'custom'}" style="padding:7px 14px;border-radius:8px;font-size:12px;">${o.label}</div>`).join('');
+}
+window.updateBtnOption = function(idx, field, val) { _tempBtnOptions[idx][field] = val; renderBtnOptionsList(); };
+window.addBtnOption = function() { if (_tempBtnOptions.length >= 6) { showToast('Máximo 6 opciones', 'error'); return; } _tempBtnOptions.push({ key: 'opt' + Date.now(), label: 'Nueva opción', type: 'custom' }); renderBtnOptionsList(); };
+window.removeBtnOption = function(idx) { if (_tempBtnOptions.length <= 2) return; _tempBtnOptions.splice(idx, 1); renderBtnOptionsList(); };
+window.saveBtnOptions = async function() { await setDoc(doc(db, 'checklist_config', 'btn_options'), { options: _tempBtnOptions }); _btnOptions = _tempBtnOptions; showToast('Botones guardados ✓', 'success'); closeModal('modalEditBtns'); renderBtnOptionsPreview(document.getElementById('btnOptionsPreview')); renderChecklist(answers); };
+
+// ========== CONFIG ==========
+let allEquipos = [], allTurnos = [];
+async function loadConfig() {
+  const eqSnap = await getDocs(collection(db,'config_equipos'));
+  const tSnap = await getDocs(collection(db,'config_turnos'));
+  allEquipos = eqSnap.docs.map(d => ({ id:d.id, nombre:d.data().nombre }));
+  allTurnos = tSnap.docs.map(d => ({ id:d.id, nombre:d.data().nombre }));
+  if(allEquipos.length === 0) allEquipos = [{ id:'1', nombre:'Tandem VT' }, { id:'2', nombre:'Tandem 1' }];
+  if(allTurnos.length === 0) allTurnos = [{ id:'1', nombre:'A' }, { id:'2', nombre:'B' }, { id:'3', nombre:'C' }];
+  const eqSel = document.getElementById('asgEquipo');
+  if(eqSel) eqSel.innerHTML = '<option value="">Seleccionar...</option>' + allEquipos.map(e => `<option value="${e.nombre}">${e.nombre}</option>`).join('');
+  const tSel = document.getElementById('asgTurno');
+  if(tSel) tSel.innerHTML = '<option value="">Seleccionar...</option>' + allTurnos.map(t => `<option value="${t.nombre}">Turno ${t.nombre}</option>`).join('');
+  const eqList = document.getElementById('equiposList');
+  if(eqList) eqList.innerHTML = allEquipos.map(e => `<div style="display:flex;justify-content:space-between;padding:6px 0"><span>${e.nombre}</span><button class="btn-action-del" onclick="deleteEquipo('${e.id}')" style="padding:2px 8px">🗑</button></div>`).join('');
+  const tList = document.getElementById('turnosList');
+  if(tList) tList.innerHTML = allTurnos.map(t => `<div style="display:flex;justify-content:space-between;padding:6px 0"><span>Turno ${t.nombre}</span><button class="btn-action-del" onclick="deleteTurno('${t.id}')" style="padding:2px 8px">🗑</button></div>`).join('');
+}
+window.addEquipo = async function() { const nombre = document.getElementById('newEquipoInput').value.trim(); if(!nombre) return; await addDoc(collection(db,'config_equipos'), { nombre }); document.getElementById('newEquipoInput').value = ''; await loadConfig(); showToast('Equipo agregado'); };
+window.addTurno = async function() { const nombre = document.getElementById('newTurnoInput').value.trim(); if(!nombre) return; await addDoc(collection(db,'config_turnos'), { nombre }); document.getElementById('newTurnoInput').value = ''; await loadConfig(); showToast('Turno agregado'); };
+window.deleteEquipo = async function(id) { await deleteDoc(doc(db,'config_equipos',id)); await loadConfig(); };
+window.deleteTurno = async function(id) { await deleteDoc(doc(db,'config_turnos',id)); await loadConfig(); };
+// ========== HISTORIAL ==========
+async function loadHistorial() {
+  const bodyEl = document.getElementById('historialBody');
+  if(!bodyEl) return;
+  bodyEl.innerHTML = '<div class="empty-state">Cargando...</div>';
+  try {
+    let q;
+    if(currentRole === 'admin' || currentRole === 'keyuser') {
+      q = query(collection(db,'checklist_records'), orderBy('ts','desc'));
+    } else {
+      q = query(collection(db,'checklist_records'), where('userId','==',currentUser.uid), orderBy('ts','desc'));
+    }
+    const snap = await getDocs(q);
+    if(snap.empty) { bodyEl.innerHTML = '<div class="empty-state">📁 Sin registros</div>'; return; }
+    const records = snap.docs.map(_normalizeRecord);
+    bodyEl.innerHTML = records.slice(0,50).map(rec => {
+      const s = rec.stats || {};
+      const tot = s.total || 1;
+      const okW = Math.round((s.ok||0)/tot*100);
+      const failW = Math.round((s.fail||0)/tot*100);
+      return `<div class="hist-card" onclick="openHistRecord('${rec.docId}')">
+        <div class="hist-top">
+          <span class="hist-id">${rec.id || rec.docId.slice(0,8).toUpperCase()}</span>
+          <span class="hist-date">${rec.fecha}</span>
+        </div>
+        <div class="hist-meta">
+          <span class="hist-tag">🏭 ${rec.equipo||'—'}</span>
+          <span class="hist-tag">🔄 Turno ${rec.turno||'—'}</span>
+          <span class="hist-tag">👤 ${rec.userName||'—'}</span>
+          ${s.critFail ? `<span class="hist-tag" style="color:#991b1b;border-color:#fca5a5;background:#fee2e2">⚠️ ${s.critFail} CRIT</span>` : ''}
+        </div>
+        <div class="hist-bar-wrap">
+          <div class="hist-bar-track">
+            <div class="hb-ok" style="width:${okW}%"></div>
+            <div class="hb-fail" style="width:${failW}%"></div>
+          </div>
+          <span class="hist-pct" style="color:${rec.pct>=90?'#1a7a3c':rec.pct>=70?'#b7770d':'#c0392b'}">${rec.pct||0}%</span>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) { bodyEl.innerHTML = '<div class="empty-state">Error al cargar historial</div>'; console.error(e); }
+}
+
+window.openHistRecord = function(docId) {
+  // Simple view: show audit mode data
+  showToast('Cargando registro...');
+};
+
+// ========== EXCEL REPORT (Admin only) ==========
+window.exportarReporteExcel = async function() {
+  if(currentRole !== 'admin') { showToast('Solo el administrador puede generar reportes', 'error'); return; }
+  const fecha = document.getElementById('reportFecha').value;
+  if(!fecha) { showToast('Selecciona una fecha', 'error'); return; }
+  const statusEl = document.getElementById('exportStatus');
+  if(statusEl) { statusEl.style.display='block'; statusEl.textContent='⏳ Cargando registros...'; }
+  try {
+    const q = query(collection(db,'checklist_records'), where('fecha','==',fecha));
+    const snap = await getDocs(q);
+    if(snap.empty) { if(statusEl) statusEl.textContent='⚠️ Sin registros para esa fecha'; showToast('Sin registros para esa fecha', 'error'); return; }
+    const records = snap.docs.map(d=>({docId:d.id,...d.data()}));
+    if(statusEl) statusEl.textContent=`✓ ${records.length} registro(s). Generando Excel...`;
+
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = 'TMT1 CheckList v5';
+    workbook.created = new Date();
+
+    // Color palette (industrial, matches TMT1 Excel)
+    const C = {
+      headerBg:'FF1A1A1A', headerFg:'FFFFFFFF',
+      titleBg:'FFC75B00', titleFg:'FFFFFFFF',
+      subBg:'FFFFF7ED', subFg:'FF92400E',
+      z0Bg:'FFFEE2E2', z1Bg:'FFEFF6FF', z2Bg:'FFFAF5FF', z3Bg:'FFFFFBEB',
+      z0Acc:'FFB91C1C', z1Acc:'FF1D4ED8', z2Acc:'FF6D28D9', z3Acc:'FFB45309',
+      okBg:'FFD1FAE5', okFg:'FF065F46', failBg:'FFFEE2E2', failFg:'FF991B1B',
+      naBg:'FFF3F4F6', naFg:'FF6B7280', pendBg:'FFFEF3C7', pendFg:'FF92400E',
+      border:'FFD1D5DB', altRow:'FFF9FAFB',
+      ZONA_BG: {z0:'FFFEE2E2',z1:'FFEFF6FF',z2:'FFFAF5FF',z3:'FFFFFBEB'},
+      ZONA_ACC: {z0:'FFB91C1C',z1:'FF1D4ED8',z2:'FF6D28D9',z3:'FFB45309'},
+    };
+    const bord = {style:'thin',color:{argb:C.border}};
+    const borders = {top:bord,left:bord,bottom:bord,right:bord};
+
+    function styleCell(cell, {bg,fg,bold,size,align,wrap,border:brd}={}) {
+      if(bg) cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:bg}};
+      if(fg||bold||size) cell.font={name:'Arial',size:size||10,bold:!!bold,color:{argb:fg||'FF000000'}};
+      if(align) cell.alignment={horizontal:align,vertical:'middle',wrapText:!!wrap};
+      if(brd!==false) cell.border=borders;
+    }
+
+    // ── RESUMEN SHEET ──
+    const ws = workbook.addWorksheet('RESUMEN', {properties:{tabColor:{argb:'FFC75B00'}}});
+    ws.columns=[{width:20},{width:14},{width:10},{width:10},{width:8},{width:8},{width:10},{width:14}];
+    ws.mergeCells('A1:H1');
+    styleCell(ws.getCell('A1'),{bg:C.headerBg,fg:C.headerFg,bold:true,size:13,align:'center'});
+    ws.getCell('A1').value=`CHECK LIST TMT1 — RESUMEN DIARIO ${fecha}`;
+    ws.getRow(1).height=26;
+    const sumHdrs=['OPERARIO','EQUIPO','TURNO','OK','FALLAS','CRÍTICOS','N/A','CUMPLIMIENTO'];
+    const sumHRow=ws.getRow(2); sumHRow.height=18;
+    sumHdrs.forEach((h,i)=>{ const c=sumHRow.getCell(i+1); c.value=h; styleCell(c,{bg:C.titleBg,fg:C.titleFg,bold:true,align:'center'}); });
+    records.forEach((rec,i)=>{
+      const s=rec.stats||{}; const r=ws.getRow(i+3); r.height=16;
+      const pct=rec.pct||0;
+      const vals=[rec.userName||'—',rec.equipo||'—',rec.turno||'—',s.ok||0,s.fail||0,s.critFail||0,s.na||0,`${pct}%`];
+      vals.forEach((v,j)=>{
+        const c=r.getCell(j+1); c.value=v;
+        const bg=i%2===0?'FFFFFFFF':C.altRow;
+        styleCell(c,{bg,align:j<3?'left':'center',size:10});
+        if(j===7){ styleCell(c,{bg:pct>=90?C.okBg:pct>=70?C.pendBg:C.failBg,fg:pct>=90?C.okFg:pct>=70?C.pendFg:C.failFg,bold:true,align:'center'}); }
+        if(j===4&&(s.fail||0)>0) c.font={name:'Arial',size:10,bold:true,color:{argb:C.failFg}};
+      });
+    });
+    ws.views=[{state:'frozen',ySplit:2}];
+
+    // ── ONE SHEET PER RECORD ──
+    records.forEach((rec,idx)=>{
+      const sheetName=`${(rec.turno||'T').replace(/[^A-Za-z0-9]/g,'')}-${(rec.equipo||'EQ').replace(/[^A-Za-z0-9]/g,'').slice(0,8)}-${idx+1}`.slice(0,31);
+      const ws2=workbook.addWorksheet(sheetName);
+      ws2.columns=[{width:8},{width:28},{width:50},{width:12},{width:12},{width:8},{width:14},{width:36}];
+      ws2.mergeCells('A1:H1'); styleCell(ws2.getCell('A1'),{bg:C.headerBg,fg:C.headerFg,bold:true,size:13,align:'center'});
+      ws2.getCell('A1').value='CHECK LIST MOLDURERA — PLANTA MOLDURAS (TMT1)'; ws2.getRow(1).height=26;
+      ws2.mergeCells('A2:H2'); styleCell(ws2.getCell('A2'),{bg:C.titleBg,fg:C.titleFg,bold:true,align:'center'});
+      ws2.getCell('A2').value=`Fecha: ${rec.fecha}  |  Equipo: ${rec.equipo||'—'}  |  Turno: ${rec.turno||'—'}  |  Operario: ${rec.userName||'—'}  |  Cumplimiento: ${rec.pct||0}%`; ws2.getRow(2).height=20;
+      const s=rec.stats||{};
+      ws2.mergeCells('A3:H3'); styleCell(ws2.getCell('A3'),{bg:'FF2D2D2D',fg:'FFFFFFFF',align:'center'});
+      ws2.getCell('A3').value=`OK: ${s.ok||0}   |   FALLAS: ${s.fail||0}   |   N/A: ${s.na||0}   |   PENDIENTES: ${s.pending||0}   |   CRÍTICOS: ${s.critFail||0}`; ws2.getRow(3).height=16;
+      ws2.getRow(4).height=6;
+      const hdrs=['N°','SUBCATEGORÍA','ACTIVIDAD','CONTROL','TOLERANCIA','CRIT','RESULTADO','OBSERVACIONES'];
+      const hrow=ws2.getRow(5); hrow.height=18;
+      hdrs.forEach((h,i)=>{ const c=hrow.getCell(i+1); c.value=h; styleCell(c,{bg:C.headerBg,fg:C.headerFg,bold:true,align:'center'}); });
+      let rowIdx=6; let alt=false;
+      ZONAS.forEach(zona=>{
+        const zbg=C.ZONA_BG[zona.id]||'FFF3F4F6'; const zacc=C.ZONA_ACC[zona.id]||'FF6B7280';
+        ws2.mergeCells(`A${rowIdx}:H${rowIdx}`);
+        const zc=ws2.getCell(`A${rowIdx}`); zc.value=`${zona.emoji} ${zona.name}`; ws2.getRow(rowIdx).height=18;
+        styleCell(zc,{bg:zacc,fg:'FFFFFFFF',bold:true,align:'left',size:11}); rowIdx++;
+        zona.subcats.forEach(sc=>{
+          ws2.mergeCells(`A${rowIdx}:H${rowIdx}`);
+          const sc2=ws2.getCell(`A${rowIdx}`); sc2.value=`  ${sc.id} — ${sc.name}`; ws2.getRow(rowIdx).height=15;
+          styleCell(sc2,{bg:zbg,fg:C.headerBg,bold:true,align:'left',size:9}); rowIdx++;
+          sc.items.forEach(item=>{
+            const ans=rec.answers?.[item.id]||{}; const state=ans.state||'';
+            const btnType=getEffectiveBtnOptions().find(b=>b.key===state)?.type||state;
+            const resultLabel=btnType==='ok'?'OK':btnType==='fail'||btnType==='custom'?'FALLA':state==='na'?'N/A':'PENDIENTE';
+            const row=ws2.getRow(rowIdx++); row.height=ans.obs&&state!=='ok'?28:15; alt=!alt;
+            const rowBg=alt?C.altRow:'FFFFFFFF';
+            const cells=[{v:item.id,a:'center'},{v:sc.name,a:'left'},{v:item.label,a:'left'},{v:item.ctrl,a:'center'},{v:item.tol,a:'center'},{v:item.crit?'SÍ':'no',a:'center'},{v:resultLabel,a:'center'},{v:ans.obs||'',a:'left'}];
+            cells.forEach((cd,j)=>{
+              const c=row.getCell(j+1); c.value=cd.v;
+              styleCell(c,{bg:rowBg,align:cd.a,size:9,wrap:j===2||j===7});
+              if(j===6){
+                if(btnType==='ok') styleCell(c,{bg:C.okBg,fg:C.okFg,bold:true,align:'center'});
+                else if(btnType==='fail'||btnType==='custom') styleCell(c,{bg:C.failBg,fg:C.failFg,bold:true,align:'center'});
+                else if(state==='na') styleCell(c,{bg:C.naBg,fg:C.naFg,align:'center'});
+                else styleCell(c,{bg:C.pendBg,fg:C.pendFg,align:'center'});
+              }
+              if(j===5&&item.crit) c.font={name:'Arial',size:9,bold:true,color:{argb:C.failFg}};
+            });
+          });
+        });
+      });
+      ws2.views=[{state:'frozen',ySplit:5}];
+    });
+
+    workbook.moveWorksheet('RESUMEN',0);
+    if(statusEl) statusEl.textContent='✓ Descargando...';
+    const buf=await workbook.xlsx.writeBuffer();
+    const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download=`CheckList_TMT1_${fecha}.xlsx`; a.click();
+    URL.revokeObjectURL(url);
+    if(statusEl) statusEl.textContent=`✅ Descargado: CheckList_TMT1_${fecha}.xlsx`;
+    showToast('Excel descargado ✓','success');
+  } catch(e) {
+    console.error(e);
+    if(statusEl) statusEl.textContent='❌ Error: '+e.message;
+    showToast('Error al generar Excel','error');
+  }
+};
+
+window.copyReport = function() { if(_reportRecord) navigator.clipboard.writeText(JSON.stringify(_reportRecord,null,2)); showToast('Copiado'); };
+window.switchTab = function(name) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  const page = document.getElementById('page-'+name);
+  const tab  = document.getElementById('tab-'+name);
+  if(page) page.classList.add('active');
+  if(tab)  tab.classList.add('active');
+  if(name === 'calendario') renderCalendar();
+  if(name === 'historial')  loadHistorial();
+  if(name === 'admin') { renderKeyUserAssignmentsList(); renderOperariosStreak(); loadAssignments(); loadConfig(); refreshZonaSelector(); }
+};
+window.doLogin = async function() {
+  const username = document.getElementById('loginUser').value.trim().toLowerCase();
+  const pass = document.getElementById('loginPass').value;
+  const errEl = document.getElementById('loginErr');
+  if(!username || !pass) { errEl.textContent='Completa los campos'; errEl.style.display='block'; return; }
+  try { await signInWithEmailAndPassword(auth, username+'@tmt1.cl', pass); }
+  catch(e) { errEl.textContent='Usuario o contraseña incorrectos'; errEl.style.display='block'; }
+};
+window.doLogout = async function() { await signOut(auth); location.reload(); };
+
+
+
+document.getElementById('asgFecha').value = new Date().toISOString().split('T')[0];
+document.getElementById('reportFecha').value = new Date().toISOString().split('T')[0];
+
+</script>
+</body>
+</html>
