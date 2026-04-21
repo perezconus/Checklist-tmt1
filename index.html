@@ -998,7 +998,10 @@ function doc(db_or_ref, ...segs) {
 }
 
 function where(field, op, val) { return { type:'where', field, op, val }; }
-function orderBy(field, dir)   { return { type:'orderBy', field, dir: dir||'ASCENDING' }; }
+function orderBy(field, dir)   { 
+  const direction = dir === 'desc' ? 'DESCENDING' : dir === 'asc' ? 'ASCENDING' : (dir || 'ASCENDING');
+  return { type:'orderBy', field, dir: direction }; 
+}
 function query(ref, ...constraints) { return { ...ref, __constraints: constraints }; }
 
 const db = { __path: [] };
